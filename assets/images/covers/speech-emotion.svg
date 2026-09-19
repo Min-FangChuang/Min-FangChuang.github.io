@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 920" role="img" aria-labelledby="title desc">
+  <title id="title">跨資料集語音情緒辨識封面</title><desc id="desc">語音波形、資料集交換與情緒分類示意</desc>
+  <rect width="1400" height="920" fill="#f3f0f8"/>
+  <g transform="translate(110 145)">
+    <rect width="1180" height="520" rx="34" fill="#102a43"/>
+    <path d="M75 260h55l30-90 55 205 55-265 55 300 55-230 50 115 40-35h90" fill="none" stroke="#4bb3c3" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+    <g font-family="Arial, sans-serif" font-weight="700">
+      <rect x="680" y="85" width="185" height="92" rx="20" fill="#1769aa"/><text x="772" y="142" text-anchor="middle" fill="#fff" font-size="28">CREMA-D</text>
+      <rect x="925" y="85" width="185" height="92" rx="20" fill="#7c3aed"/><text x="1017" y="142" text-anchor="middle" fill="#fff" font-size="28">RAVDESS</text>
+      <path d="M865 130h60" stroke="#e7a84b" stroke-width="12"/><path d="M900 105l25 25-25 25" fill="none" stroke="#e7a84b" stroke-width="12"/>
+      <rect x="650" y="260" width="490" height="175" rx="24" fill="#fff"/>
+      <text x="895" y="320" text-anchor="middle" fill="#102a43" font-size="27">EMOTION OUTPUT</text>
+      <text x="895" y="382" text-anchor="middle" fill="#1769aa" font-size="36">happy · calm · angry</text>
+    </g>
+  </g>
+  <text x="90" y="820" fill="#102a43" font-family="Arial, sans-serif" font-size="66" font-weight="700">Speech Emotion Recognition</text>
+  <text x="93" y="870" fill="#627d98" font-family="Arial, sans-serif" font-size="28">Cross-dataset evaluation · System demo</text>
+</svg>

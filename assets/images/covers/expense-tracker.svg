@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 920" role="img" aria-labelledby="title desc">
+  <title id="title">Expense Tracker CLI 封面</title><desc id="desc">命令列視窗、資料記錄與測試結果示意</desc>
+  <rect width="1400" height="920" fill="#f2f1f8"/>
+  <rect x="155" y="145" width="1090" height="600" rx="34" fill="#102a43"/>
+  <rect x="155" y="145" width="1090" height="82" rx="34" fill="#243b53"/>
+  <circle cx="215" cy="186" r="14" fill="#e76969"/><circle cx="260" cy="186" r="14" fill="#e7a84b"/><circle cx="305" cy="186" r="14" fill="#58b68c"/>
+  <g font-family="monospace" font-size="34"><text x="230" y="315" fill="#4bb3c3">$ expense add 120 lunch</text><text x="230" y="385" fill="#d9e2ec">Saved: 2026-09-17 · food · 120</text><text x="230" y="490" fill="#4bb3c3">$ expense summary --month 09</text><text x="230" y="560" fill="#d9e2ec">Total 3,840 · 12 records</text><text x="230" y="665" fill="#7fd3a9">✓ tests passed</text></g>
+  <text x="90" y="835" fill="#102a43" font-family="Arial, sans-serif" font-size="70" font-weight="700">Expense Tracker CLI</text>
+  <text x="93" y="885" fill="#627d98" font-family="Arial, sans-serif" font-size="28">Modular services · JSON storage · Subprocess tests</text>
+</svg>

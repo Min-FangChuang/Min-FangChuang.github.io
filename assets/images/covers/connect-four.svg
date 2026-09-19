@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 920" role="img" aria-labelledby="title desc">
+  <title id="title">立體四子棋封面</title><desc id="desc">立體棋盤與雙色棋子示意</desc>
+  <rect width="1400" height="920" fill="#eef4f8"/>
+  <g transform="translate(300 120)" stroke="#102a43" stroke-width="8" fill="none" opacity=".9">
+    <path d="M0 160h520v420H0zM150 20h520v420H150zM0 160L150 20M520 160L670 20M520 580L670 440M0 580L150 440"/>
+    <path d="M130 160v420M260 160v420M390 160v420M0 265h520M0 370h520M0 475h520" opacity=".45"/>
+  </g>
+  <g>
+    <circle cx="505" cy="300" r="42" fill="#1769aa"/><circle cx="635" cy="405" r="42" fill="#1769aa"/>
+    <circle cx="765" cy="510" r="42" fill="#1769aa"/><circle cx="895" cy="615" r="42" fill="#1769aa"/>
+    <circle cx="635" cy="300" r="42" fill="#e7a84b"/><circle cx="765" cy="405" r="42" fill="#e7a84b"/>
+    <circle cx="895" cy="405" r="42" fill="#e7a84b"/>
+  </g>
+  <text x="90" y="820" fill="#102a43" font-family="Arial, sans-serif" font-size="70" font-weight="700">3D Connect Four</text>
+  <text x="93" y="870" fill="#627d98" font-family="Arial, sans-serif" font-size="28">Mobile game · Board state · Win detection</text>
+</svg>

@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="以 TTL 組合邏輯、二補數、D Flip-Flop 與 BCD 修正實作的可連續運算十進位加減計算機。">
+  <meta name="theme-color" content="#102a43">
+  <title>十進位加減計算機｜莊旻芳作品集</title>
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+  <script src="../../assets/js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至主要內容</a>
+  <header class="site-header" data-header>
+    <div class="shell nav-wrap">
+      <a class="brand" href="../../index.html" aria-label="回到作品集首頁">
+        <span class="brand-mark" aria-hidden="true">MF</span>
+        <span>莊旻芳</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="開啟導覽" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span class="sr-only">開啟導覽</span>
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="作品導覽" data-nav>
+        <a href="#overview">摘要</a>
+        <a href="#architecture">架構</a>
+        <a href="#verification">驗證</a>
+        <a href="#demo">Demo</a>
+        <a href="#gallery">圖面</a>
+        <a class="nav-github" href="../../index.html">作品集首頁</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="project-hero shell">
+      <div class="breadcrumb"><a href="../../index.html">作品集</a><span>/</span><span>硬體與嵌入式</span></div>
+      <p class="eyebrow">Digital logic · TTL hardware prototype</p>
+      <h1>可連續運算之<br>十進位加減計算機</h1>
+      <p class="project-lead">以 TTL 組合邏輯、二補數運算、D Flip-Flop 暫存與 BCD 修正，建立從十進位輸入到雙位數顯示的完整硬體資料路徑。</p>
+      <div class="tag-row" aria-label="使用技術">
+        <span>TTL Logic</span><span>BCD</span><span>D Flip-Flop</span><span>7-Segment</span><span>Breadboard</span>
+      </div>
+      <div class="project-actions">
+        <a class="button button-primary" href="#overview">快速了解</a>
+        <a class="button button-secondary" href="#demo">觀看 Demo</a>
+      </div>
+    </section>
+
+    <section class="project-showcase shell">
+      <figure class="cover-photo cover-circuit">
+        <img src="../../assets/images/calculator/system-overview.png" alt="十進位輸入、加減運算、暫存回授、BCD 修正與雙位數顯示完整系統電路圖" width="1131" height="588">
+        <figcaption>完整系統電路圖</figcaption>
+      </figure>
+      <div class="metric-stack" aria-label="專案摘要數據">
+        <div><strong>0–9</strong><span>單次十進位輸入</span></div>
+        <div><strong>ADD / SUB</strong><span>二補數共用資料路徑</span></div>
+        <div><strong>0–19</strong><span>目前主要顯示範圍</span></div>
+        <div><strong>5 stages</strong><span>輸入、運算、暫存、修正、顯示</span></div>
+      </div>
+    </section>
+
+    <section id="overview" class="section section-tint">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">01</p>
+          <h2>三十秒掌握作品</h2>
+        </div>
+        <div class="content-body">
+          <p class="lead-paragraph">一般計算機把輸入、運算、記憶與顯示藏在單一晶片裡；本作品刻意只使用基本 TTL IC，讓每一段訊號都能沿著實際接線追蹤。</p>
+          <div class="point-list">
+            <article><span>Input</span><div><h3>十進位輸入編碼</h3><p>74148 負責 0–7，另以獨立輸入與邏輯閘補出 8、9，形成 D[3:0]。</p></div></article>
+            <article><span>Compute</span><div><h3>同一資料路徑完成加減</h3><p>模式 M 同時控制四組 XOR 與 Cin，使 7483 在加法與二補數減法間切換。</p></div></article>
+            <article><span>State</span><div><h3>結果回授形成連續運算</h3><p>計算結果寫入 D Flip-Flop 成為 Q[3:0]，再回到下一次運算的輸入端。</p></div></article>
+            <article><span>Display</span><div><h3>BCD 修正後顯示十進位</h3><p>當結果超過 9，第二顆 7483 加入 0110，再分離 ONES 與 TENS 驅動七段顯示器。</p></div></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="architecture" class="section shell content-grid">
+      <div class="sticky-heading">
+        <p class="section-index">02</p>
+        <h2>系統架構</h2>
+      </div>
+      <div class="content-body">
+        <div class="flow-diagram" role="img" aria-label="十進位輸入經編碼、加減運算、暫存回授、BCD 修正後輸出至七段顯示器">
+          <div><span>01</span><strong>Decimal input</strong><small>0–9 switches</small></div>
+          <i aria-hidden="true">→</i>
+          <div><span>02</span><strong>Encode</strong><small>D[3:0]</small></div>
+          <i aria-hidden="true">→</i>
+          <div><span>03</span><strong>Add / Sub</strong><small>R = Q + (D XOR M) + M</small></div>
+          <i aria-hidden="true">→</i>
+          <div><span>04</span><strong>Store &amp; feedback</strong><small>DFF · Q[4:0]</small></div>
+          <i aria-hidden="true">→</i>
+          <div><span>05</span><strong>BCD &amp; display</strong><small>ONES · TENS</small></div>
+        </div>
+
+        <figure class="wide-figure lightbox-target">
+          <button type="button" data-lightbox="../../assets/images/calculator/system-overview.png" aria-label="放大完整電路圖">
+            <img src="../../assets/images/calculator/system-overview.png" alt="十進位加減計算機完整電路圖" width="1131" height="588">
+          </button>
+          <figcaption>完整資料路徑：輸入編碼、算術、暫存、BCD 修正與顯示</figcaption>
+        </figure>
+
+        <div class="formula-grid">
+          <article><p>加減資料路徑</p><code>R = Q + (D XOR M) + M</code><small>M=0 為加法；M=1 為二補數減法</small></article>
+          <article><p>BCD 修正條件</p><code>K = Q4 OR (Q3 AND Q2) OR (Q3 AND Q1)</code><small>K=1 時，低四位加上 0110</small></article>
+          <article><p>十位輸出</p><code>TENS = Q4 OR C_BCD</code><small>涵蓋 10–15 的修正進位與 16–19 的第五位</small></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">03</p>
+          <h2>關鍵設計決策</h2>
+        </div>
+        <div class="content-body">
+          <div class="decision-grid">
+            <article><span>01</span><h3>以 74148 替代十進位編碼器</h3><p>現有元件無 74147，因此使用 74148 處理 0–7，再用兩個輸入與邏輯閘擴充 8、9。</p></article>
+            <article><span>02</span><h3>用 XOR 與 Cin 統一加減</h3><p>不建立兩套算術電路，由 M 同步反相輸入並補 1，讓同一顆 7483 完成兩種運算。</p></article>
+            <article><span>03</span><h3>以 DFF 保存可延續狀態</h3><p>R 在 COMPUTE_CLK 邊緣寫入 Q；Q 回授後，電路從一次性組合運算提升為可連續操作的時序系統。</p></article>
+            <article><span>04</span><h3>用第二顆 7483 完成 BCD 修正</h3><p>結果大於 9 時加入 6，讓低四位成為合法個位 BCD，同時產生十位資訊。</p></article>
+            <article><span>05</span><h3>結果進入 16–19 時鎖定 Compute</h3><p>當 Q4=1 時停用 Compute 按鈕與計算時脈，避免後續運算只回授低四位 Q[3:0]，造成高位被截斷與顯示結果失真；鎖定期間綠色指示燈熄滅。</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="verification" class="section shell content-grid">
+      <div class="sticky-heading">
+        <p class="section-index">04</p>
+        <h2>功能驗證紀錄</h2>
+      </div>
+      <div class="content-body">
+        <p class="lead-paragraph">下表依 Demo 影片記錄連續操作中的目前值、輸入、模式及顯示結果，並將算術預期與實際觀察分開。第二步按下 Compute 時受機械按鍵彈跳影響，產生多個時脈邊緣，因此畫面由 4 顯示為 12；此筆不列為算術驗證通過。</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>步驟</th><th>目前值</th><th>輸入</th><th>模式</th><th>預期結果</th><th>影片觀察</th><th>LOCK</th><th>判定</th></tr></thead>
+            <tbody>
+              <tr><td>01</td><td>0</td><td>4</td><td>ADD</td><td>4</td><td><strong>4</strong></td><td>OFF</td><td><span class="status status-pass">一致</span></td></tr>
+              <tr><td>02</td><td>4</td><td>4</td><td>ADD</td><td>8</td><td><strong>12</strong></td><td>OFF</td><td><span class="status status-anomaly">按鍵彈跳</span></td></tr>
+              <tr><td>03</td><td>12</td><td>5</td><td>SUB</td><td>7</td><td><strong>7</strong></td><td>OFF</td><td><span class="status status-pass">一致</span></td></tr>
+              <tr><td>04</td><td>7</td><td>3</td><td>SUB</td><td>4</td><td><strong>4</strong></td><td>OFF</td><td><span class="status status-pass">一致</span></td></tr>
+              <tr><td>05</td><td>4</td><td>5</td><td>ADD</td><td>9</td><td><strong>9</strong></td><td>OFF</td><td><span class="status status-pass">一致</span></td></tr>
+              <tr><td>06</td><td>9</td><td>6</td><td>ADD</td><td>15</td><td><strong>15</strong></td><td>OFF</td><td><span class="status status-pass">一致</span></td></tr>
+              <tr><td>07</td><td>15</td><td>2</td><td>ADD</td><td>17</td><td><strong>17</strong></td><td>ON</td><td><span class="status status-pass">一致／鎖定</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="verification-note"><strong>按鍵彈跳紀錄：</strong>步驟 02 的算術預期為 8，但機械式 Compute 按鍵在一次操作中產生多個時脈邊緣，使輸入 4 被重複累加，影片觀察值因此為 12。這反映時脈輸入尚未加入去彈跳處理，而非將 12 視為正確的加法結果。</p>
+      </div>
+    </section>
+
+    <section id="demo" class="section demo-section">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">Demo</p>
+          <h2>實體原型操作展示</h2>
+        </div>
+        <div class="content-body">
+          <div class="video-embed">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/2s_sQW-NP5s?rel=0"
+              title="十進位加減計算機 Demo 影片"
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+          </div>
+          <p class="video-fallback">若本機預覽無法載入播放器，可<a href="https://youtu.be/2s_sQW-NP5s" target="_blank" rel="noreferrer">前往 YouTube 觀看 Demo ↗</a></p>
+          <div class="demo-notes">
+            <article><span>01</span><div><h3>顯示範圍與鎖定機制</h3><p>操作序列最後由 15 加 2 得到 17；結果進入 16–19 後，LOCK 切換為 ON 並停止後續計算，避免只回授低四位所造成的高位截斷。</p></div></article>
+            <article><span>02</span><div><h3>加減混合連續運算</h3><p>示範切換加法與減法模式，並由 D Flip-Flop 保存前一次結果，使下一次操作能在既有數值上繼續運算。</p></div></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="gallery" class="section section-tint">
+      <div class="shell">
+        <div class="section-heading">
+          <div><p class="eyebrow">Design details</p><h2>電路圖面</h2></div>
+          <p>點選圖面可放大檢視訊號與元件關係。</p>
+        </div>
+        <div class="gallery-grid">
+          <figure class="lightbox-target"><button type="button" aria-label="放大十進位輸入編碼電路圖" data-lightbox="../../assets/images/calculator/input-encoder.png"><img src="../../assets/images/calculator/input-encoder.png" alt="0 至 9 十進位輸入與 74148 擴充編碼電路" width="680" height="460"></button><figcaption>十進位輸入與 74148 擴充編碼</figcaption></figure>
+          <figure class="lightbox-target"><button type="button" aria-label="放大加減運算與暫存回授電路圖" data-lightbox="../../assets/images/calculator/arithmetic-memory.png"><img src="../../assets/images/calculator/arithmetic-memory.png" alt="7483 加減運算與 D Flip-Flop 暫存回授電路" width="1160" height="540"></button><figcaption>加減運算、暫存與結果回授</figcaption></figure>
+          <figure class="lightbox-target"><button type="button" aria-label="放大 BCD 修正與七段顯示電路圖" data-lightbox="../../assets/images/calculator/bcd-display.png"><img src="../../assets/images/calculator/bcd-display.png" alt="BCD 加六修正與七段顯示電路" width="970" height="518"></button><figcaption>BCD 修正、個位與十位顯示</figcaption></figure>
+          <figure class="lightbox-target photo-figure"><button type="button" aria-label="放大麵包板實作照片" data-lightbox="../../assets/images/calculator/breadboard-prototype.jpg"><img src="../../assets/images/calculator/breadboard-prototype.jpg" alt="計算機麵包板實作全景" width="1336" height="1536"></button><figcaption>麵包板實作全景</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell content-grid">
+      <div class="sticky-heading">
+        <p class="section-index">05</p>
+        <h2>限制與下一步</h2>
+      </div>
+      <div class="content-body">
+        <div class="limits-grid">
+          <div><h3>目前限制</h3><ul><li>主要顯示範圍為 0–19，尚無負號與更高位數。</li><li>機械按鍵可能因彈跳造成多個時脈邊緣。</li></ul></div>
+          <div><h3>預定改良</h3><ul><li>加入 RC 或 Schmitt trigger 去彈跳。</li><li>增加負值判斷、負號及溢位保護。</li><li>加入量測測試點並簡化跳線。</li><li>以 CPLD／FPGA 重現相同邏輯並比較時序與維護性。</li></ul></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-grid">
+      <div><strong>莊旻芳</strong><p>資訊工程作品集</p></div>
+      <p>十進位加減計算機 · 數位邏輯實作</p>
+      <a href="../../index.html">返回作品集首頁</a>
+    </div>
+  </footer>
+
+  <dialog class="lightbox" data-lightbox-dialog aria-label="圖片預覽">
+    <button class="lightbox-close" type="button" data-lightbox-close aria-label="關閉圖片預覽">×</button>
+    <img data-lightbox-image alt="放大圖片預覽">
+  </dialog>
+</body>
+</html>

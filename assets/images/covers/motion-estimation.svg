@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 920" role="img" aria-labelledby="title desc">
+  <title id="title">Motion Estimation 封面</title><desc id="desc">以影格方塊與移動向量呈現動態估測</desc>
+  <rect width="1400" height="920" fill="#eaf2f8"/>
+  <g fill="none" stroke="#9fb3c8" stroke-width="2" opacity=".8">
+    <path d="M0 150h1400M0 300h1400M0 450h1400M0 600h1400M0 750h1400"/>
+    <path d="M175 0v920M350 0v920M525 0v920M700 0v920M875 0v920M1050 0v920M1225 0v920"/>
+  </g>
+  <rect x="285" y="220" width="450" height="330" rx="28" fill="#fff" stroke="#1769aa" stroke-width="8"/>
+  <rect x="670" y="365" width="450" height="330" rx="28" fill="#fff" stroke="#102a43" stroke-width="8"/>
+  <path d="M560 385c120-25 185 5 250 85" fill="none" stroke="#e7a84b" stroke-width="24" stroke-linecap="round"/>
+  <path d="M778 422l38 58-68-6" fill="#e7a84b"/>
+  <g fill="#1769aa"><rect x="365" y="300" width="96" height="96" rx="12"/><rect x="480" y="360" width="96" height="96" rx="12"/><rect x="805" y="450" width="96" height="96" rx="12"/><rect x="920" y="510" width="96" height="96" rx="12"/></g>
+  <text x="90" y="820" fill="#102a43" font-family="Arial, sans-serif" font-size="70" font-weight="700">Motion Estimation</text>
+  <text x="93" y="870" fill="#627d98" font-family="Arial, sans-serif" font-size="28">Block matching · Motion vector · Frame compensation</text>
+</svg>

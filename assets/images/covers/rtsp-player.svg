@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 920" role="img" aria-labelledby="title desc">
+  <title id="title">RTSP RTP 串流播放器封面</title><desc id="desc">播放器視窗與串流封包流程示意</desc>
+  <rect width="1400" height="920" fill="#edf4f6"/>
+  <rect x="170" y="155" width="840" height="555" rx="34" fill="#fff" stroke="#102a43" stroke-width="10"/>
+  <rect x="220" y="215" width="740" height="405" rx="20" fill="#102a43"/>
+  <circle cx="590" cy="418" r="95" fill="#4bb3c3"/>
+  <path d="M560 360l105 58-105 58z" fill="#fff"/>
+  <g fill="#1769aa"><rect x="1090" y="230" width="145" height="86" rx="18"/><rect x="1130" y="370" width="145" height="86" rx="18"/><rect x="1060" y="510" width="145" height="86" rx="18"/></g>
+  <g stroke="#e7a84b" stroke-width="12" stroke-linecap="round"><path d="M1010 280h80"/><path d="M1010 410h120"/><path d="M1010 560h50"/></g>
+  <text x="90" y="820" fill="#102a43" font-family="Arial, sans-serif" font-size="70" font-weight="700">RTSP / RTP Player</text>
+  <text x="93" y="870" fill="#627d98" font-family="Arial, sans-serif" font-size="28">Session control · Packet handling · MJPEG playback</text>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 920" role="img" aria-labelledby="title desc">
+  <title id="title">離散時間系統模擬與視覺化封面</title><desc id="desc">離散序列、卷積與濾波響應示意</desc>
+  <rect width="1400" height="920" fill="#eef7f4"/>
+  <g transform="translate(110 120)">
+    <rect width="1180" height="560" rx="30" fill="#fff" stroke="#cbd9e5" stroke-width="5"/>
+    <g stroke="#b8c9d6" stroke-width="3"><path d="M90 280h1000"/><path d="M590 60v440"/></g>
+    <g stroke="#1769aa" stroke-width="10" fill="#1769aa">
+      <path d="M140 280v-80M220 280v-155M300 280v-235M380 280v-120M460 280v55"/>
+      <circle cx="140" cy="200" r="10"/><circle cx="220" cy="125" r="10"/><circle cx="300" cy="45" r="10"/><circle cx="380" cy="160" r="10"/><circle cx="460" cy="335" r="10"/>
+    </g>
+    <path d="M650 330c85-250 165-250 245 0s160 250 225-30" fill="none" stroke="#d97706" stroke-width="14" stroke-linecap="round"/>
+    <rect x="475" y="230" width="230" height="100" rx="22" fill="#102a43"/>
+    <text x="590" y="296" text-anchor="middle" fill="#fff" font-family="Arial, sans-serif" font-size="34" font-weight="700">SYSTEM</text>
+  </g>
+  <text x="90" y="820" fill="#102a43" font-family="Arial, sans-serif" font-size="66" font-weight="700">Discrete-Time Systems</text>
+  <text x="93" y="870" fill="#627d98" font-family="Arial, sans-serif" font-size="28">Difference equations · Convolution · Filtering</text>
+</svg>
