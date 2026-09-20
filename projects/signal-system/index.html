@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="以 MATLAB App Designer 製作離散時間差分方程、線性卷積與濾波系統的互動模擬與視覺化工具。">
+  <meta name="theme-color" content="#102a43">
+  <title>離散時間系統模擬與視覺化｜莊旻芳作品集</title>
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+  <script src="../../assets/js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至主要內容</a>
+  <header class="site-header" data-header>
+    <div class="shell nav-wrap">
+      <a class="brand" href="../../index.html" aria-label="回到作品集首頁">
+        <span class="brand-mark" aria-hidden="true">MF</span>
+        <span>莊旻芳</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="開啟導覽" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span class="sr-only">開啟導覽</span>
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="作品導覽" data-nav>
+        <a href="#overview">摘要</a>
+        <a href="#modules">三個模組</a>
+        <a href="#implementation">實作</a>
+        <a href="#demo">Demo</a>
+        <a href="#source">Source</a>
+        <a class="nav-github" href="../../index.html">作品集首頁</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="project-hero shell">
+      <div class="breadcrumb"><a href="../../index.html">作品集</a><span>/</span><span>訊號與系統</span></div>
+      <p class="eyebrow">Signals and systems · MATLAB App Designer</p>
+      <h1>離散時間系統<br>模擬與視覺化</h1>
+      <p class="project-lead">將差分方程、線性卷積與濾波系統做成三個 MATLAB App Designer 工具，讓輸入訊號、系統響應與輸出結果能以圖形方式同步觀察。</p>
+      <div class="tag-row" aria-label="使用技術">
+        <span>MATLAB App Designer</span><span>filter()</span><span>conv()</span><span>FFT</span><span>stem plot</span>
+      </div>
+      <div class="project-actions">
+        <a class="button button-primary" href="#modules">查看三個模組</a>
+        <a class="button button-secondary" href="#source">下載 source</a>
+      </div>
+    </section>
+
+    <section class="project-showcase shell signal-showcase">
+      <figure class="cover-photo signal-cover">
+        <img src="../../assets/images/covers/signal-system.svg" alt="離散時間訊號、卷積與濾波視覺化示意" width="1400" height="920">
+        <figcaption>差分方程、卷積與濾波系統的離散訊號視覺化</figcaption>
+      </figure>
+      <div class="metric-stack" aria-label="專案摘要數據">
+        <div><strong>公式→波形</strong><span>把差分方程轉成可觀察的輸入與輸出序列。</span></div>
+        <div><strong>x[n]／h[n]／y[n]</strong><span>並排理解輸入、系統響應與輸出之間的關係。</span></div>
+        <div><strong>時域＋頻域</strong><span>在濾波工具中對照波形與頻率成分變化。</span></div>
+        <div><strong>Demo 核對</strong><span>三支操作影片對應三個工具的使用流程。</span></div>
+      </div>
+    </section>
+
+    <section id="overview" class="section section-tint">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">01</p>
+          <h2>作品摘要</h2>
+        </div>
+        <div class="content-body">
+          <p class="lead-paragraph">這組作品把訊號與系統課程中的離散時間概念轉成可操作介面。使用者可以選擇 impulse、step、sine 或 custom 輸入，設定差分方程係數，並觀察 x[n]、h[n]、y[n] 的變化。</p>
+          <div class="point-list">
+            <article><span>Input</span><div><h3>輸入訊號產生</h3><p>前三種 preset 依長度自動產生訊號；custom 模式則由使用者輸入數值序列。</p></div></article>
+            <article><span>System</span><div><h3>差分方程描述系統</h3><p>以 x coefficient 與 y coefficient 建立離散時間系統，並即時更新方程式顯示。</p></div></article>
+            <article><span>Visual</span><div><h3>離散序列視覺化</h3><p>使用 stem plot 呈現每個取樣點，避免把離散時間訊號誤看成連續曲線。</p></div></article>
+            <article><span>Verify</span><div><h3>從時域延伸到頻域</h3><p>第三個工具加入 FFT 與濾波器設計，觀察輸入、系統與輸出在時域和頻域的對應。</p></div></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="modules" class="section shell content-grid">
+      <div class="sticky-heading">
+        <p class="section-index">02</p>
+        <h2>三個模組</h2>
+      </div>
+      <div class="content-body">
+        <div class="module-list">
+          <article>
+            <div>
+              <span class="module-index">01</span>
+              <h3>差分方程系統</h3>
+              <p>第一個工具聚焦在離散時間差分方程本身。左側介面分成 input 與 difference equation：input 區可設定長度並選擇 impulse、step、sine 或 custom；difference equation 區輸入 x coefficient 與 y coefficient，並即時顯示目前方程式。</p>
+              <p>按下 Simulate 後，程式以 <code>filter(b, a, x)</code> 計算輸出 y[n]，右側上下兩個座標軸分別顯示 Input x[n] 與 Output y[n]，用來觀察同一組系統係數對不同輸入序列的影響。</p>
+            </div>
+            <figure>
+              <img src="../../assets/images/signal-system/difference-equation-layout-5.png" alt="差分方程系統 MATLAB App 介面配置，左側為輸入與方程式設定，右側為 x[n] 與 y[n] 波形" width="3000" height="1688">
+              <figcaption>差分方程系統介面配置</figcaption>
+            </figure>
+          </article>
+
+          <article>
+            <div>
+              <span class="module-index">02</span>
+              <h3>線性卷積</h3>
+              <p>第二個工具把差分方程延伸到 convolution 的觀察。介面同樣保留 input 與 difference equation 設定，但右側新增 unit-sample response h[n]，讓使用者能同時看到 x[n]、h[n] 與 y[n]。</p>
+              <p>計算流程先用單位脈衝輸入求得 h[n]，再以 <code>conv(x, h, 'full')</code> 產生輸出，最後截取與輸入長度相同的 y[n] 顯示。這讓「差分方程描述系統」與「輸入和系統響應卷積得到輸出」兩種觀點可以互相對照。</p>
+            </div>
+            <figure>
+              <img src="../../assets/images/signal-system/convolution-layout-5.png" alt="卷積 MATLAB App 介面配置，左側為輸入與方程式設定，右側為 x[n]、h[n] 與 y[n] 波形" width="3000" height="1688">
+              <figcaption>線性卷積介面配置</figcaption>
+            </figure>
+          </article>
+
+          <article>
+            <div>
+              <span class="module-index">03</span>
+              <h3>濾波系統</h3>
+              <p>第三個工具把系統模擬推進到濾波觀察。左側上半部用 filter 下拉選單與 cutoff frequency、order 等參數設定 LPF、HPF 或 BPF，也保留係數欄位顯示目前差分方程；左側下半部用 M 與 omega 設定由多個 cos 成分組成的輸入訊號。</p>
+              <p>右側以六個座標軸並排顯示 x[n]、h[n]、y[n] 的時域結果，以及經 <code>fft()</code> 與 <code>fftshift()</code> 後的頻域結果，用來觀察濾波器如何保留或削弱不同頻率成分。</p>
+            </div>
+            <figure>
+              <img src="../../assets/images/signal-system/freq-filter-layout-05.png" alt="濾波系統 MATLAB App 介面配置，左側為濾波器與輸入設定，右側為時域與頻域波形" width="3000" height="1688">
+              <figcaption>濾波系統介面配置</figcaption>
+            </figure>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="implementation" class="section section-dark">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">03</p>
+          <h2>實作重點</h2>
+        </div>
+        <div class="content-body">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Function</th><th>用途</th><th>在工具中的角色</th></tr></thead>
+              <tbody>
+                <tr><td><code>parseArray</code></td><td>將字串轉成數值向量</td><td>處理 custom 輸入與係數欄位，例如 <code>1, 0, -0.5</code>。</td></tr>
+                <tr><td><code>validateCoeffs</code></td><td>檢查係數是否合法</td><td>在 simulate 前確認係數非空，且分母係數首項可用。</td></tr>
+                <tr><td><code>joinArray</code></td><td>將數值向量轉成顯示字串</td><td>把 preset 產生的訊號回填到 custom 欄位，方便使用者檢查。</td></tr>
+                <tr><td><code>updateEquationLabel</code></td><td>更新差分方程文字</td><td>當係數或濾波器設定變更時，讓介面同步呈現目前系統。</td></tr>
+                <tr><td><code>updateInputX</code></td><td>根據 M 與 omega 產生輸入</td><td>在濾波工具中顯示由多個 cos 成分組成的 x[n]。</td></tr>
+                <tr><td><code>updatesyscoeff</code></td><td>更新系統係數</td><td>依 LPF、HPF、BPF 或自訂模式決定 a、b 係數。</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="verification-note"><strong>實作原則：</strong>計算部分使用 MATLAB 內建函式處理差分方程、卷積與頻域轉換；作品重點放在輸入驗證、互動介面、方程式顯示，以及將抽象訊號概念轉成可觀察圖形。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="section demo-section">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">Demo</p>
+          <h2>操作展示</h2>
+        </div>
+        <div class="content-body">
+          <div class="demo-notes">
+            <article><span>01</span><div><h3>差分方程系統</h3><p>展示輸入訊號與差分方程係數如何轉換為 y[n]。</p><p><a href="https://youtu.be/lzwAFmvWAyg" target="_blank" rel="noreferrer">觀看 Demo ↗</a></p></div></article>
+            <article><span>02</span><div><h3>線性卷積</h3><p>展示 h[n] 的產生，以及 x[n] 與 h[n] convolution 後的輸出。</p><p><a href="https://youtu.be/Kdg298-7gwE" target="_blank" rel="noreferrer">觀看 Demo ↗</a></p></div></article>
+            <article><span>03</span><div><h3>濾波系統</h3><p>展示濾波器設定對輸入訊號與輸出結果的時域、頻域影響。</p><p><a href="https://youtu.be/gTJD-2YcG-M" target="_blank" rel="noreferrer">觀看 Demo ↗</a></p></div></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="source" class="section shell content-grid">
+      <div class="sticky-heading">
+        <p class="section-index">04</p>
+        <h2>Source 檔案</h2>
+      </div>
+      <div class="content-body">
+        <div class="limits-grid">
+          <div><h3>差分方程系統</h3><p>MATLAB App Designer source。</p><a class="button button-secondary" href="../../assets/code/signal-system/difference-equation.mlapp">下載 difference-equation.mlapp</a></div>
+          <div><h3>線性卷積</h3><p>MATLAB App Designer source。</p><a class="button button-secondary" href="../../assets/code/signal-system/convolution.mlapp">下載 convolution.mlapp</a></div>
+          <div><h3>濾波系統</h3><p>MATLAB App Designer source。</p><a class="button button-secondary" href="../../assets/code/signal-system/freq-filter.mlapp">下載 freq-filter.mlapp</a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-grid">
+      <div><strong>莊旻芳</strong><p>資訊工程作品集</p></div>
+      <p>離散時間系統 · 訊號與系統課程作品</p>
+      <a href="../../index.html">返回作品集首頁</a>
+    </div>
+  </footer>
+</body>
+</html>

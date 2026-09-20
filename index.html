@@ -104,7 +104,7 @@
             <article>
               <p class="journey-term">113-2</p><h3>系統實作與跨校資安學習</h3>
               <div class="journey-events">
-                <div class="journey-event event-systems"><span>作品 · 系統</span><strong>RTSP／RTP MJPEG 串流播放器</strong><p>實作 session 狀態控制、RTP 封包解析與影像播放流程。</p></div>
+                <div class="journey-event event-systems"><span>課程練習 · 系統</span><strong>RTSP／RTP MJPEG 串流播放器</strong><p>以課程提供架構為基礎，補齊 session 狀態控制、RTP 封包收送與影像播放流程。</p></div>
                 <div class="journey-event event-hardware"><span>作品 · 嵌入式</span><strong>ESP32 智慧開關與冷氣控制</strong><p>整合 AP 網頁、定時控制、伺服馬達與冷氣紅外線命令。</p></div>
                 <div class="journey-event event-security"><span>跨校課程 · 資安</span><strong>成功大學「網路安全實務與社會實踐」</strong><p>透過跨校課程接觸網路安全實務，並延伸後續的競賽練習與社群參與。</p></div>
               </div>
@@ -252,7 +252,7 @@
               <span class="project-card-body">
                 <span class="project-category">系統與網路 · 影像處理</span>
                 <strong>RTSP／RTP MJPEG 播放器</strong>
-                <span>實作串流連線、RTSP 狀態控制、RTP 封包處理與 MJPEG 畫面播放。</span>
+                <span>以課程提供架構為基礎，完成 RTSP 控制流程、RTP 封包收送與 MJPEG 畫面播放。</span>
                 <span class="project-card-footer"><em>RTSP · RTP · MJPEG</em><i aria-hidden="true">＋</i></span>
               </span>
             </button>
@@ -406,7 +406,9 @@
     data-summary="以 C++ 與 OpenCV 實作四種 block matching 方法，觀察搜尋策略對運算量與補償成果的影響。"
     data-points="比較 Exhaustive、2D Logarithmic、Hierarchical 與 Diamond Search|以 16×16 block、±7 搜尋範圍執行估測|輸出 compensated frame、motion vector 與 CSV 結果"
     data-tags="C++|OpenCV|Block Matching|Motion Vector|Benchmark"
-    data-status="114-2 多媒體系統課程作品；程式與輸出已具備，詳細作品頁與比較圖表待整理。"></template>
+    data-status="114-2 多媒體系統課程作品；已整理完整報告附件與 C++ source。"
+    data-more="projects/motion-estimation/"
+    data-more-label="查看完整說明"></template>
 
   <template id="project-connect-four"
     data-category="行動裝置程式設計 · 軟體工程"
@@ -414,9 +416,9 @@
     data-image="assets/images/covers/connect-four.svg"
     data-image-alt="立體四子棋行動遊戲與立體棋盤示意"
     data-summary="行動裝置程式設計期末小遊戲，將四子棋規則延伸為立體棋盤操作與連線判定。"
-    data-points="設計適合行動裝置操作的遊戲介面|處理玩家輪流落子與棋盤狀態|完成立體方向的連線勝負判定與遊戲流程"
+    data-points="設計適合行動裝置操作的遊戲介面|處理玩家輪流落子與棋盤狀態|完成直、橫、斜三種方向的立體連線判定，並以形成兩條連線作為勝利條件"
     data-tags="Mobile App|Game Logic|UI|State Management"
-    data-status="112-2 行動裝置程式設計期末作品，已保留實機操作 Demo。"
+    data-status="112-2 行動裝置程式設計期末作品，Demo 影片包含成果展示、版面配置過程、Code Box 設計過程，並配字幕說明。"
     data-demo="https://www.youtube.com/watch?v=3Zq13pKfCdo"
     data-demo-label="觀看立體四子棋 Demo ↗"></template>
 
@@ -425,10 +427,10 @@
     data-title="RTSP／RTP MJPEG 串流播放器"
     data-image="assets/images/covers/rtsp-player.svg"
     data-image-alt="RTSP RTP 串流播放器與封包流程示意"
-    data-summary="從連線控制到影像播放，實作 RTSP session 狀態與 RTP 影像封包處理。"
-    data-points="建立 SETUP、PLAY、PAUSE 與 TEARDOWN 狀態流程|解析 RTP header 與 payload sequence|重建並顯示 MJPEG 影格，搭配封包分析驗證"
+    data-summary="以課程提供的 RTSP／RTP 串流播放架構為基礎，補齊控制流程與影像播放驗證。"
+    data-points="補齊 SETUP、PLAY、PAUSE 與 TEARDOWN 狀態切換|處理 RTP 封包收送與 payload sequence|重建並顯示 MJPEG 影格，搭配 Demo 驗證播放流程"
     data-tags="RTSP|RTP|MJPEG|Socket|Wireshark"
-    data-status="計算機網路自主學習專題實作，程式與操作 Demo 已整理。"
+    data-status="計算機網路自主學習專題練習；以老師提供架構為基礎完成 RTSP／RTP 控制流程與 Demo 驗證。"
     data-demo="https://youtu.be/fneA6dBj9gU"
     data-demo-label="觀看 RTSP／RTP Demo ↗"></template>
 
@@ -440,7 +442,9 @@
     data-summary="以程式模擬離散時間差分方程、卷積與濾波系統，透過視覺化觀察輸入、系統與輸出的關係。"
     data-points="模擬離散時間差分方程系統並呈現序列變化|將卷積計算過程轉化為可視化 Demo|展示濾波系統對輸入訊號與輸出結果的影響"
     data-tags="Discrete-time System|Difference Equation|Convolution|Filtering|Visualization"
-    data-status="訊號與系統課程作品，具備程式碼、簡報與三項操作 Demo。"
+    data-status="訊號與系統課程作品；已整理差分方程、卷積與濾波系統三個 MATLAB App Designer 工具。"
+    data-more="projects/signal-system/"
+    data-more-label="查看完整說明"
     data-demos="差分方程系統 Demo::https://youtu.be/lzwAFmvWAyg|卷積 Demo::https://youtu.be/Kdg298-7gwE|濾波系統 Demo::https://youtu.be/gTJD-2YcG-M"></template>
 
   <template id="project-speech-emotion"
@@ -451,7 +455,9 @@
     data-summary="在 CREMA-D 與 RAVDESS 間進行雙向跨資料集評估，並將模型推論流程整理為可操作的語音情緒辨識系統。"
     data-points="以 CREMA-D 訓練並在 RAVDESS 測試|以 RAVDESS 訓練並在 CREMA-D 測試|完成輸入語音與輸出情緒結果的系統 Demo"
     data-tags="Speech Emotion Recognition|CREMA-D|RAVDESS|Cross-Dataset Evaluation"
-    data-status="已保留兩組跨資料集評估 Demo 與一支完整系統操作 Demo。"
+    data-status="已整理訓練流程、系統介面與 Python source；原始模型 checkpoint 與資料集未公開。"
+    data-more="projects/speech-emotion/"
+    data-more-label="查看完整說明"
     data-demos="CREMA-D → RAVDESS::https://youtu.be/EWEnetAUhnw|RAVDESS → CREMA-D::https://youtu.be/1KCkTBvCXX8|辨識系統 Demo::https://youtu.be/-_pY8tYlULE"></template>
 
   <template id="project-security-labs"
@@ -463,6 +469,8 @@
     data-points="驗證 Samba Username Map Script Command Injection（CVE-2007-2447）|驗證 Rejetto HFS 2.3b（CVE-2014-6287）|整理掃描、環境確認、PoC 操作與結果截圖"
     data-tags="Samba|Rejetto HFS|CVE-2007-2447|CVE-2014-6287|Lab Validation"
     data-status="114-2 資訊安全課程實作；所有測試均在授權的隔離實驗環境完成。"
+    data-more="projects/security-labs/"
+    data-more-label="查看完整說明"
     data-demos="Samba CVE-2007-2447::https://youtu.be/y7eQoWpk1EI|Rejetto HFS CVE-2014-6287::https://youtu.be/hzUj3j-MjGA"></template>
 
   <template id="project-esp32"
@@ -473,16 +481,22 @@
     data-summary="以 ESP32 同時控制伺服馬達與 Daikin 冷氣紅外線命令，並提供 Web 操作介面。"
     data-points="GPIO13 驅動 Servo 操作實體開關|GPIO4 透過 IRremoteESP8266 傳送 DAIKIN152 命令|以 AP 模式提供同步與設定路由，調整距離與角度後穩定操作"
     data-tags="ESP32|Servo|IRremoteESP8266|Daikin152|Web Control"
-    data-status="核心控制已完成；接線圖、操作影片與完整程式發布待整理。"></template>
+    data-status="ESP32 AP、網頁控制、Servo 按壓與 Daikin 紅外線控制流程已整理為完整作品頁。"
+    data-more="projects/esp32-control/"
+    data-more-label="查看完整說明"
+    data-demo="https://youtube.com/shorts/Cq19u2Gnnrs"
+    data-demo-label="觀看 Demo"></template>
 
   <template id="project-expense"
     data-category="軟體工程"
     data-title="Expense Tracker CLI"
     data-image="assets/images/covers/expense-tracker.svg"
     data-image-alt="Expense Tracker CLI 命令列與測試結果示意"
-    data-summary="以規格驅動方式拆分命令列記帳工具，讓資料模型、驗證、儲存與輸出各自可測試。"
-    data-points="拆分 main、cli、services、validators、storage 等模組|使用 JSON 保存資料並支援篩選與匯出|以 subprocess 建立接近真實使用情境的 CLI 測試"
-    data-tags="Python|CLI|JSON|Validation|Subprocess Test"
-    data-status="TAICA 生成式 AI 應用系統與工程課程作業；詳細頁待加入規格演進紀錄。"></template>
+    data-summary="以規格導向開發實作命令列記帳工具，從 v1 基礎 CRUD 演化到 v2 摘要分析、分類治理與 JSON 匯出。"
+    data-points="拆分 main、cli、services、validators、storage、formatter、exporter 等模組|v2 新增 list 摘要、summary 指令、category 管理與 JSON export|完整頁已放入 v2 Python 原始碼，保留 v1 成功路徑並支援 schema 演化"
+    data-tags="Python|CLI|SDD|JSON|argparse|Modular Design"
+    data-status="TAICA HW2 Spec-Driven Development 作業；已整理 v1 → v2 規格、架構與驗證結果。"
+    data-more="projects/expense-tracker/"
+    data-more-label="查看完整說明"></template>
 </body>
 </html>

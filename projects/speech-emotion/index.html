@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="以 MFCC 與 1D CNN 建立語音情緒辨識模型，整理 RAVDESS、CREMA-D 訓練測試與跨資料集觀察，並製作可操作的 Python GUI Demo。">
+  <meta name="theme-color" content="#102a43">
+  <title>跨資料集語音情緒辨識｜莊旻芳作品集</title>
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+  <script src="../../assets/js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至主要內容</a>
+  <header class="site-header" data-header>
+    <div class="shell nav-wrap">
+      <a class="brand" href="../../index.html" aria-label="回到作品集首頁">
+        <span class="brand-mark" aria-hidden="true">MF</span>
+        <span>莊旻芳</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="開啟導覽" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span class="sr-only">開啟導覽</span>
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="作品導覽" data-nav>
+        <a href="#overview">摘要</a>
+        <a href="#pipeline">流程</a>
+        <a href="#evaluation">正確率分析</a>
+        <a href="#system">系統</a>
+        <a href="#conclusion">結論</a>
+        <a href="#source">Source</a>
+        <a class="nav-github" href="../../index.html">作品集首頁</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="project-hero shell">
+      <div class="breadcrumb"><a href="../../index.html">作品集</a><span>/</span><span>訊號與系統</span></div>
+      <p class="eyebrow">Speech emotion recognition · MFCC + 1D CNN</p>
+      <h1>跨資料集語音<br>情緒辨識</h1>
+      <p class="project-lead">使用 RAVDESS 與 CREMA-D 語音資料集建立情緒辨識模型，將 MFCC 特徵、1D CNN 訓練流程、跨資料集測試觀察與可操作的 Python GUI 系統整理成完整作品頁。</p>
+      <div class="tag-row" aria-label="使用技術">
+        <span>Python</span><span>PyTorch</span><span>librosa</span><span>MFCC</span><span>1D CNN</span><span>Tkinter</span>
+      </div>
+      <div class="project-actions">
+        <a class="button button-primary" href="#system">查看系統介面</a>
+        <a class="button button-secondary" href="#source">下載 source</a>
+      </div>
+    </section>
+
+    <section class="project-showcase shell">
+      <figure class="cover-photo cover-caption-below">
+        <img src="../../assets/images/covers/speech-emotion.svg" alt="語音波形、情緒分類與跨資料集評估示意" width="1400" height="920">
+        <figcaption>以 MFCC 特徵與 1D CNN 將語音片段分類為情緒標籤</figcaption>
+      </figure>
+      <div class="metric-stack" aria-label="專案摘要數據">
+        <div><strong>MFCC</strong><span>每段 2.5 秒音訊取 20 維特徵。</span></div>
+        <div><strong>1D CNN</strong><span>以卷積層、BatchNorm、Pooling 與分類器建立模型。</span></div>
+        <div><strong>8 / 6</strong><span>RAVDESS 八類情緒；CREMA-D 六類情緒。</span></div>
+        <div><strong>3 Demo</strong><span>兩組跨資料集測試與一支系統操作展示。</span></div>
+      </div>
+    </section>
+
+    <section id="overview" class="section section-tint">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">01</p>
+          <h2>作品摘要</h2>
+        </div>
+        <div class="content-body">
+          <p class="lead-paragraph">本作品目標不是只在單一資料集取得高準確率，而是觀察模型在不同語音情緒資料集之間是否能維持辨識能力。訓練流程分別處理 RAVDESS 與 CREMA-D，並用 GUI 系統把模型選擇、音訊輸入、情緒結果、機率分布、波形與 MFCC 視覺化集中在同一個介面。</p>
+          <div class="point-list">
+            <article><span>Dataset</span><div><h3>兩種語音情緒資料集</h3><p>RAVDESS 以檔名編碼出八種情緒類別；CREMA-D 以檔名中的情緒縮寫整理六種情緒類別。</p></div></article>
+            <article><span>Feature</span><div><h3>以 MFCC 作為模型輸入</h3><p>每段音訊讀取為 22050 Hz、2.5 秒長度，使用 20 維 MFCC 表示語音特徵。</p></div></article>
+            <article><span>Model</span><div><h3>1D CNN 情緒分類</h3><p>模型用多層 Conv1d、BatchNorm、ReLU、MaxPool 與 AdaptiveAvgPool1d 萃取時間序列特徵，再輸出情緒類別。</p></div></article>
+            <article><span>System</span><div><h3>可操作推論系統</h3><p>使用者可選擇六類或八類模型，載入 wav 檔後查看預測結果、各類機率、音訊波形與 MFCC 圖。</p></div></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="section shell content-grid">
+      <div class="sticky-heading">
+        <p class="section-index">02</p>
+        <h2>訓練流程</h2>
+      </div>
+      <div class="content-body">
+        <div class="flow-diagram" aria-label="語音情緒辨識流程">
+          <div><span>01</span><strong>Load wav</strong><small>讀取 2.5 秒音訊，統一 sample rate 與長度。</small></div>
+          <i aria-hidden="true">→</i>
+          <div><span>02</span><strong>Augment</strong><small>保留原始音訊，另加入 noise 與 pitch shift。</small></div>
+          <i aria-hidden="true">→</i>
+          <div><span>03</span><strong>MFCC</strong><small>以 n_mfcc=20、n_fft=2048、hop_length=512 產生特徵。</small></div>
+          <i aria-hidden="true">→</i>
+          <div><span>04</span><strong>1D CNN</strong><small>以 Adam 與 CrossEntropyLoss 訓練情緒分類器。</small></div>
+          <i aria-hidden="true">→</i>
+          <div><span>05</span><strong>GUI</strong><small>載入 checkpoint，顯示 prediction、probability、waveform 與 MFCC。</small></div>
+        </div>
+        <div class="limits-grid">
+          <div>
+            <h3>資料前處理</h3>
+            <p>音訊轉成固定長度後，分別建立原始、加雜訊與 pitch shift 版本。資料集切分使用 stratified 8:2 train/test split，降低類別比例不均造成的偏差。</p>
+          </div>
+          <div>
+            <h3>模型設計</h3>
+            <p>1D CNN 從 20 維 MFCC 輸入開始，通過多個卷積區塊逐步擴充特徵通道，再以 adaptive average pooling 與全連接層完成分類。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="evaluation" class="section section-dark">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">03</p>
+          <h2>模型訓練與正確率分析</h2>
+        </div>
+        <div class="content-body">
+          <p class="lead-paragraph">兩個模型皆訓練 50 epochs，表格中的最佳 epoch 代表 test split 表現最佳的 checkpoint。RAVDESS 與 CREMA-D 在各自資料集的 test split 上都能取得約 97% 準確率；但跨資料集測試時，非訓練資料集的語音容易被模型集中判成相同情緒，顯示錄音條件、語句內容與情緒標註標準差異會明顯影響泛化。</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>訓練／測試設定</th><th>訓練 epochs</th><th>最佳 epoch</th><th>Test Accuracy</th><th>Test Loss</th><th>觀察</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>RAVDESS train/test split</td><td>50</td><td>40</td><td>0.9699</td><td>0.1118</td><td>第 40 epoch 的 checkpoint 測試表現最佳，八類情緒分類穩定。</td></tr>
+                <tr><td>CREMA-D train/test split</td><td>50</td><td>42</td><td>0.9725</td><td>0.1231</td><td>第 42 epoch 的 checkpoint 測試表現最佳，六類情緒分類穩定。</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="training-visuals">
+            <h3>訓練曲線與 confusion matrix</h3>
+            <p>資料操作上，每筆語音保留原始 waveform，並產生 noise 與 pitch shift 版本，因此訓練資料量擴充為三倍。模型訓練結果用 accuracy curve 觀察收斂情況，再用 confusion matrix 檢查各情緒類別的分類表現。</p>
+            <div class="training-figure-grid">
+              <figure class="training-curve lightbox-target"><button type="button" data-lightbox="../../assets/images/speech-emotion/ravdess-training-curves.png" aria-label="放大 RAVDESS loss 與 accuracy curve"><img src="../../assets/images/speech-emotion/ravdess-training-curves.png" alt="RAVDESS 訓練與測試的 loss curve、accuracy curve" width="767" height="314"></button><figcaption>RAVDESS loss / accuracy curve</figcaption></figure>
+              <figure class="training-matrix lightbox-target"><button type="button" data-lightbox="../../assets/images/speech-emotion/ravdess-confusion-matrix.png" aria-label="放大 RAVDESS confusion matrix"><img src="../../assets/images/speech-emotion/ravdess-confusion-matrix.png" alt="RAVDESS 語音情緒辨識 confusion matrix" width="719" height="625"></button><figcaption>RAVDESS confusion matrix</figcaption></figure>
+              <figure class="training-curve lightbox-target"><button type="button" data-lightbox="../../assets/images/speech-emotion/cremad-training-curves.png" aria-label="放大 CREMA-D loss 與 accuracy curve"><img src="../../assets/images/speech-emotion/cremad-training-curves.png" alt="CREMA-D 訓練與測試的 loss curve、accuracy curve" width="767" height="314"></button><figcaption>CREMA-D loss / accuracy curve</figcaption></figure>
+              <figure class="training-matrix lightbox-target"><button type="button" data-lightbox="../../assets/images/speech-emotion/cremad-confusion-matrix.png" aria-label="放大 CREMA-D confusion matrix"><img src="../../assets/images/speech-emotion/cremad-confusion-matrix.png" alt="CREMA-D 語音情緒辨識 confusion matrix" width="693" height="608"></button><figcaption>CREMA-D confusion matrix</figcaption></figure>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="system" class="section shell content-grid">
+      <div class="sticky-heading">
+        <p class="section-index">04</p>
+        <h2>系統介面</h2>
+      </div>
+      <div class="content-body">
+        <div class="interface-layout">
+          <figure class="wide-figure lightbox-target">
+            <button type="button" data-lightbox="../../assets/images/speech-emotion/ser-interface-layout-13.png" aria-label="放大語音情緒辨識系統介面圖">
+              <img src="../../assets/images/speech-emotion/ser-interface-layout-13.png" alt="語音情緒辨識系統介面，包含模型選擇、音訊選擇、辨識結果、機率、波形與 MFCC 視覺化區塊" width="1654" height="930">
+            </button>
+            <figcaption>系統將操作控制、預測結果、情緒機率、waveform 與 MFCC 放在同一個視窗中，方便展示完整推論流程。</figcaption>
+          </figure>
+          <div class="interface-note">
+            <span>GUI</span>
+            <h3>Tkinter GUI 設計</h3>
+            <p>使用 Python Tkinter 製作桌面操作介面，整合模型選擇、音訊載入、情緒預測、機率視覺化、waveform 與 MFCC 圖，讓模型推論流程可以被直接操作與展示。</p>
+          </div>
+        </div>
+        <div class="decision-grid">
+          <article><span>01</span><h3>模型選擇</h3><p>可在六類 CREMA-D 模型與八類 RAVDESS 模型之間切換，讓不同資料集訓練結果用同一套介面測試。</p></article>
+          <article><span>02</span><h3>音訊輸入</h3><p>使用者選擇 wav 檔後，系統會轉換為固定長度 waveform，並產生與訓練流程一致的 MFCC。</p></article>
+          <article><span>03</span><h3>結果呈現</h3><p>介面顯示預測情緒、各類別機率，並用波形與 MFCC 圖輔助理解模型輸入。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="section demo-section">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">Demo</p>
+          <h2>測試評估</h2>
+        </div>
+        <div class="content-body">
+          <div class="demo-notes">
+            <article><span>01</span><div><h3>同資料集測試</h3><p>使用與訓練時相同資料集來源的語音進行測試，展示 GUI 中選擇模型、載入音訊、顯示情緒結果與機率圖的完整操作。</p><p><a href="https://youtu.be/-_pY8tYlULE" target="_blank" rel="noreferrer">觀看 Demo ↗</a></p></div></article>
+            <article><span>02</span><div><h3>CREMA-D → RAVDESS 交叉測試</h3><p>展示以 CREMA-D 相關模型或資料流程測試 RAVDESS 音訊時的跨資料集辨識現象。</p><p><a href="https://youtu.be/EWEnetAUhnw" target="_blank" rel="noreferrer">觀看 Demo ↗</a></p></div></article>
+            <article><span>03</span><div><h3>RAVDESS → CREMA-D 交叉測試</h3><p>展示以 RAVDESS 相關模型或資料流程測試 CREMA-D 音訊時的跨資料集辨識現象。</p><p><a href="https://youtu.be/1KCkTBvCXX8" target="_blank" rel="noreferrer">觀看 Demo ↗</a></p></div></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="conclusion" class="section section-tint">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">05</p>
+          <h2>結論與參考資料</h2>
+        </div>
+        <div class="content-body">
+          <p class="lead-paragraph">兩個模型在各自訓練資料集的測試切分中表現良好；但當輸入改成非訓練資料集時，容易出現多筆音訊被判成相同情緒的情況。這表示 RAVDESS 與 CREMA-D 在錄音環境、語句內容、情緒表達方式與標註標準上的差異，會造成明顯的 domain gap，模型仍需要更多跨資料集校正或資料擴充才能穩定泛化。</p>
+          <div class="reference-list">
+            <h3>參考資料</h3>
+            <ul>
+              <li><a href="https://medium.com/@CKWeilliam/%E9%9F%B3%E8%B3%AAai%E8%BE%A8%E8%AD%98-e2171e0b1eb9" target="_blank" rel="noreferrer">Medium: 語音 AI 辨識文章</a></li>
+              <li><a href="https://ieeexplore.ieee.org/document/10351697" target="_blank" rel="noreferrer">IEEE Xplore: document 10351697</a></li>
+              <li><a href="https://zenodo.org/records/1188976#.YV_prWYzbzw" target="_blank" rel="noreferrer">Zenodo: RAVDESS dataset</a></li>
+              <li><a href="https://www.kaggle.com/datasets/ejlok1/cremad" target="_blank" rel="noreferrer">Kaggle: CREMA-D dataset</a></li>
+              <li><a href="https://chatgpt.com/share/6949468b-e4a4-800a-a0ba-fa4a5cee59b4" target="_blank" rel="noreferrer">ChatGPT conversation reference</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="source" class="section shell content-grid">
+      <div class="sticky-heading">
+        <p class="section-index">06</p>
+        <h2>公開附件</h2>
+      </div>
+      <div class="content-body">
+        <div class="limits-grid">
+          <div>
+            <h3>訓練腳本</h3>
+            <p>包含資料集讀取、augmentation、MFCC 特徵、DataLoader、1D CNN 模型、訓練迴圈與 checkpoint 儲存邏輯。</p>
+            <a class="button button-secondary" href="../../assets/code/speech-emotion/Emotion_Recognition_v1.py" target="_blank" rel="noreferrer">開啟 Emotion_Recognition_v1.py ↗</a>
+          </div>
+          <div>
+            <h3>系統腳本</h3>
+            <p>包含 Tkinter GUI、模型載入、音訊前處理、情緒預測、機率圖、waveform 與 MFCC 視覺化邏輯。</p>
+            <a class="button button-secondary" href="../../assets/code/speech-emotion/system.py" target="_blank" rel="noreferrer">開啟 system.py ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="lightbox" data-lightbox-dialog aria-label="圖片預覽">
+    <button class="lightbox-close" type="button" data-lightbox-close aria-label="關閉圖片預覽">×</button>
+    <img data-lightbox-image alt="放大圖片預覽">
+  </dialog>
+
+  <footer class="site-footer">
+    <div class="shell footer-grid">
+      <div><strong>莊旻芳</strong><p>資訊工程作品集</p></div>
+      <p>Speech Emotion Recognition · 訊號與系統課程作品</p>
+      <a href="../../index.html">返回作品集首頁</a>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ESP32 智慧開關與冷氣紅外線控制，整合 AP 網頁介面、SG90 伺服馬達、DAIKIN152 紅外線控制與定時排程。">
+  <meta name="theme-color" content="#102a43">
+  <title>ESP32 智慧開關與冷氣紅外線控制｜莊旻芳作品集</title>
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+  <script src="../../assets/js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至主要內容</a>
+  <header class="site-header" data-header>
+    <div class="shell nav-wrap">
+      <a class="brand" href="../../index.html" aria-label="回到作品集首頁">
+        <span class="brand-mark" aria-hidden="true">MF</span>
+        <span>莊旻芳</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="開啟導覽" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span class="sr-only">開啟導覽</span>
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="作品導覽" data-nav>
+        <a href="#motivation">初衷</a>
+        <a href="#needs">需求</a>
+        <a href="#hardware">硬體</a>
+        <a href="#system">系統</a>
+        <a href="#steps">實作</a>
+        <a href="#code">程式碼</a>
+        <a href="#demo">Demo</a>
+        <a href="#flow">流程</a>
+        <a class="nav-github" href="../../index.html">作品集首頁</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="project-hero shell">
+      <div class="breadcrumb"><a href="../../index.html">作品集</a><span>/</span><span>嵌入式系統</span></div>
+      <p class="eyebrow">ESP32 · Web control · Servo · Infrared</p>
+      <h1>ESP32 智慧開關與<br>冷氣紅外線控制</h1>
+      <p class="project-lead">在不更動原有牆壁開關與冷氣設備的前提下，以 ESP32 建立手機網頁控制、定時排程、SG90 伺服馬達按壓開關，以及 Daikin 冷氣紅外線控制原型。</p>
+      <div class="tag-row" aria-label="使用技術">
+        <span>ESP32 NodeMCU-32S</span><span>AP Mode</span><span>SG90 Servo</span><span>IRremoteESP8266</span><span>DAIKIN152</span>
+      </div>
+      <div class="project-actions">
+        <a class="button button-primary" href="#system">查看系統設計</a>
+        <a class="button button-secondary" href="#demo">觀看 Demo</a>
+        <a class="button button-secondary" href="#flow">查看完整流程</a>
+      </div>
+    </section>
+
+    <section class="project-showcase shell">
+      <figure class="cover-photo">
+        <img src="../../assets/images/covers/esp32-control.svg" alt="ESP32 連接伺服馬達與紅外線控制示意" width="1400" height="920">
+        <figcaption>Web 控制、Servo 機械按壓與 Daikin 紅外線命令</figcaption>
+      </figure>
+      <div class="metric-stack" aria-label="專案摘要">
+        <div><strong>AP</strong><span>ESP32 自建 Wi-Fi 熱點</span></div>
+        <div><strong>GPIO13</strong><span>SG90 伺服馬達按壓開關</span></div>
+        <div><strong>GPIO4</strong><span>IR LED 發送冷氣訊號</span></div>
+        <div><strong>30 sec</strong><span>排程週期檢查</span></div>
+      </div>
+    </section>
+
+    <section id="motivation" class="section shell content-grid">
+      <div class="sticky-heading">
+        <p class="section-index">01</p>
+        <h2>設計初衷</h2>
+      </div>
+      <div class="content-body">
+        <p class="lead-paragraph">本專題源自宿舍房間沒有固定網路的生活情境，希望在不依賴路由器或雲端服務的情況下，利用 ESP32 建立可獨立運作的智慧控制系統。</p>
+        <div class="vuln-explain hardware-note">
+          <article>
+            <span>照明情境</span>
+            <h3>將規律作息轉換成燈光排程</h3>
+            <p>最初構想是以早上 08:00 開燈、晚上 22:00 關燈作為規律作息的環境提示：早晨利用燈光協助自己起床，減少上課賴床的情況；晚上則藉由關燈提醒自己準備休息，讓精神逐漸放鬆。</p>
+          </article>
+          <article>
+            <span>冷氣情境</span>
+            <h3>回房前預冷與出門自動關閉</h3>
+            <p>考量南部夏季炎熱，希望能在回到房間前預先開啟冷氣，增加返家時的舒適度；也可設定出門時間自動關閉冷氣，以環境變化督促自己準時離開，同時避免忘記關機造成能源浪費。</p>
+          </article>
+        </div>
+        <p class="section-note">後續實作時，為了讓系統能配合不同日期與生活安排，沒有將 08:00 與 22:00 寫成固定值，而是設計成由使用者在手機網頁中輸入目前時間，並自行設定燈光與冷氣的開啟、關閉時間。</p>
+        <p class="section-note">因此，本系統整合伺服馬達控制實體燈光開關、冷氣紅外線控制、手機網頁操作與定時排程，讓沒有既有智慧家電及固定網路的房間，也能以外掛方式加入基本自動化功能。</p>
+      </div>
+    </section>
+
+    <section id="needs" class="section section-tint">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">02</p>
+          <h2>需求分析</h2>
+        </div>
+        <div class="content-body">
+          <p class="lead-paragraph">本專題希望在不更動原有牆壁開關與冷氣設備的前提下，加入手機控制與定時功能。</p>
+          <div class="point-list">
+            <article><span>Network</span><div><h3>自建 Wi-Fi 熱點</h3><p>ESP32 自行建立 Wi-Fi AP，不依賴家中路由器，手機連上後即可操作控制頁面。</p></div></article>
+            <article><span>Schedule</span><div><h3>手機網頁設定時間</h3><p>使用網頁同步目前時間，設定開啟與關閉時間，讓裝置能在離線環境執行排程。</p></div></article>
+            <article><span>Switch</span><div><h3>機械式按壓燈具開關</h3><p>透過 SG90 伺服馬達實際按壓牆壁開關，保留原有開關及室內配線。</p></div></article>
+            <article><span>IR</span><div><h3>冷氣紅外線學習與重送</h3><p>接收並分析大金冷氣遙控器訊號，再使用紅外線 LED 重送冷氣控制命令。</p></div></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="hardware" class="section shell content-grid">
+      <div class="sticky-heading">
+        <p class="section-index">03</p>
+        <h2>硬體選擇</h2>
+      </div>
+      <div class="content-body">
+        <p class="lead-paragraph">本系統需要同時處理網頁控制、排程、伺服馬達及冷氣紅外線訊號，因此選用具備 Wi-Fi 與多組 GPIO 的 ESP32 作為主控制器。</p>
+        <div class="table-wrap compact-table">
+          <table>
+            <thead><tr><th>硬體</th><th>用途與選擇理由</th></tr></thead>
+            <tbody>
+              <tr><td>ESP32 NodeMCU-32S</td><td>內建 Wi-Fi，可建立無線基地台並提供網頁控制介面；運算能力與 GPIO 數量足以整合排程、伺服馬達及紅外線控制。</td></tr>
+              <tr><td>SG90 伺服馬達</td><td>體積小、成本低，可控制固定角度，適合以機械方式撥動原有牆壁開關，不必更改室內配線。控制訊號接至 GPIO 13。</td></tr>
+              <tr><td>38 kHz 紅外線接收模組</td><td>接收並解調冷氣遙控器訊號，用於辨識通訊協定、位元長度及完整狀態資料。</td></tr>
+              <tr><td>940 nm 紅外線 LED</td><td>模擬原廠遙控器發射紅外線指令，控制冷氣電源、模式、溫度及風速。</td></tr>
+              <tr><td>2N2222 NPN 電晶體</td><td>ESP32 GPIO 的輸出電流有限，因此使用電晶體驅動紅外線 LED，以提升發射強度並保護控制腳位。</td></tr>
+              <tr><td>220Ω／300Ω 電阻</td><td>限制紅外線 LED 與電晶體基極電流，避免元件因電流過大而損壞。</td></tr>
+              <tr><td>外接 5V 電源</td><td>為 SG90 伺服馬達提供較穩定的電源，避免馬達啟動電流造成 ESP32 電壓下降或重新啟動；ESP32 與外接電源必須共地。</td></tr>
+              <tr><td>麵包板與杜邦線</td><td>用於原型電路搭建、訊號量測及元件調整，方便進行接收與發射測試。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="vuln-explain hardware-note">
+          <article>
+            <span>機械控制</span>
+            <h3>保留原有開關與配線</h3>
+            <p>牆壁開關由 SG90 實際撥動，讓系統能在不拆解市電線路的情況下加入遠端與定時操作。</p>
+          </article>
+          <article>
+            <span>紅外線控制</span>
+            <h3>先接收，再重建狀態封包</h3>
+            <p>冷氣遙控器通常傳送完整狀態封包，而不是單一按鍵代碼，因此需先確認協定與資料格式，再選擇對應函式庫與發射方式。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="system" class="section section-dark">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">04</p>
+          <h2>系統設計</h2>
+        </div>
+        <div class="content-body">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>模組</th><th>設計內容</th></tr></thead>
+              <tbody>
+                <tr><td>控制核心</td><td>ESP32 NodeMCU ESP-32S</td></tr>
+                <tr><td>網路</td><td>ESP32 SoftAP，SSID：<code>ESP_Light_AC</code>，Web Server 使用 Port 80。</td></tr>
+                <tr><td>操作介面</td><td>手機連上 ESP32 SoftAP 後，透過網頁輸入目前時間、設定排程並執行控制。</td></tr>
+                <tr><td>燈具控制</td><td>SG90 伺服馬達，連接 GPIO13，機械式按壓原有開關。</td></tr>
+                <tr><td>冷氣控制</td><td>IR LED、2N222 電晶體及 220/300Ω 電阻，發射腳位 GPIO4。</td></tr>
+                <tr><td>紅外線學習</td><td>IR 接收模組先擷取原廠遙控器訊號，再確認協定與狀態內容。</td></tr>
+                <tr><td>時間管理</td><td>手動同步目前時間，不依賴網際網路 NTP。</td></tr>
+                <tr><td>排程判定</td><td>每 30 秒比較目前時間與設定時間。</td></tr>
+                <tr><td>冷氣狀態</td><td>DAIKIN152、冷房 25°C、自動風量、Quiet／Comfort。</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="endpoint-grid">
+            <article><code>/</code><span>控制與排程頁面</span></article>
+            <article><code>/sync</code><span>手動輸入目前時間</span></article>
+            <article><code>/set</code><span>設定燈光及冷氣排程</span></article>
+            <article><code>/on</code><span>立即執行開啟操作</span></article>
+            <article><code>/off</code><span>立即執行關閉操作</span></article>
+            <article><code>/ac_on</code><span>開啟冷氣，冷房 25°C</span></article>
+            <article><code>/ac_off</code><span>關閉冷氣</span></article>
+          </div>
+          <div class="script-panel condition-panel">
+            <div class="script-copy"><span>排程執行條件</span></div>
+            <pre><code>timeSynced == true
+且
+開啟或關閉時間至少設定一項</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="steps" class="section shell content-grid">
+      <div class="sticky-heading">
+          <p class="section-index">05</p>
+        <h2>實作步驟</h2>
+      </div>
+      <div class="content-body">
+        <div class="module-list step-list">
+          <article><div><span class="module-index">Step 01</span><h3>測試伺服馬達</h3><p>將 SG90 控制線接至 GPIO13，使用穩定 5V 電源供電，並讓 ESP32 與伺服馬達共地。測試不同角度後，找出按下開關與回到原位的角度，封裝成開燈與關燈函式。</p><p>伺服馬達只負責機械式按壓，因此不需要拆解或修改原有市電線路。</p></div></article>
+          <article><div><span class="module-index">Step 02</span><h3>建立 ESP32 AP 與網頁介面</h3><p>設定 ESP32 為 SoftAP 模式，建立 <code>ESP_Light_AC</code> 熱點並啟動 <code>WebServer(80)</code>。手機連上 ESP32 後，可透過網頁手動輸入目前時間、設定燈光與冷氣排程，並執行立即控制。</p></div></article>
+          <article><div><span class="module-index">Step 03</span><h3>接收冷氣遙控器訊號</h3><p>紅外線接收模組接至 VCC、GND 與 ESP32 可用數位 GPIO。使用 <code>IRremoteESP8266</code> 的 <code>IRrecvDumpV2</code> 範例，記錄協定、位元長度、解碼資料與 Raw timing data，最終確認協定為 <code>DAIKIN152</code>。</p><p>冷氣遙控器通常不是只傳送「溫度加一」或「按下電源」等單一命令，而是傳送一組完整狀態，因此系統需要保存或重新建立整個冷氣狀態封包。</p></div></article>
+          <article><div><span class="module-index">Step 04</span><h3>建立紅外線發射電路</h3><p>ESP32 GPIO 的驅動能力有限，因此不直接用 GPIO 驅動 IR LED，而是透過 2N222 電晶體放大電流。基本組成為 GPIO4、電阻、2N222、IR LED 與冷氣接收器。</p><p>實測控制距離約為 1 至 1.5 公尺，IR LED 必須朝向冷氣的紅外線接收區域。</p></div></article>
+          <article><div><span class="module-index">Step 05</span><h3>實作時間同步與排程</h3><p>使用 <code>/sync</code> 接收手機送出的目前時間，保存為 <code>HH:MM</code> 格式。使用 <code>/set</code> 儲存燈光與冷氣的開啟、關閉時間，ESP32 每 30 秒檢查一次推算時間；若目前時間符合設定值，就執行伺服馬達或冷氣紅外線操作。</p></div></article>
+          <article><div><span class="module-index">Step 06</span><h3>整合測試</h3><p>依序驗證手機能否連上 ESP32 AP、網頁能否同步時間、<code>/on</code> 與 <code>/off</code> 能否控制伺服馬達、開關機構是否穩定按壓並回位，以及 IR LED 是否能讓冷氣進入冷房 25°C、自動風量及 Quiet／Comfort。</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="code" class="section section-tint">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">06</p>
+          <h2>程式碼</h2>
+        </div>
+        <div class="content-body">
+          <p class="lead-paragraph">原始 Arduino sketch 已由日期檔名整理為內容導向檔名，保留 ESP32 SoftAP、WebServer、SG90 伺服馬達與 DAIKIN152 紅外線控制邏輯。</p>
+          <div class="reference-list code-download">
+            <h3>esp32_smart_switch_ir_control.ino</h3>
+            <p>包含 Wi-Fi AP、網頁端點、燈光開關控制、冷氣開關控制、時間同步與每 30 秒排程判定。</p>
+            <a class="button button-secondary code-button" href="../../assets/code/esp32-control/esp32_smart_switch_ir_control.ino" target="_blank" rel="noreferrer">查看程式碼</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="section demo-section">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">07</p>
+          <h2>Demo 影片</h2>
+        </div>
+        <div class="content-body">
+          <div class="video-smart-embed" data-youtube-embed data-video-id="Cq19u2Gnnrs">
+            <div class="video-embed" data-youtube-frame hidden></div>
+            <a class="video-link-card" href="https://youtube.com/shorts/Cq19u2Gnnrs" target="_blank" rel="noreferrer" aria-label="在 YouTube Shorts 開啟 ESP32 智慧開關與冷氣紅外線控制 Demo" data-youtube-fallback>
+              <span class="video-play" aria-hidden="true">▶</span>
+              <span>
+                <strong>ESP32 智慧開關與冷氣紅外線控制 Demo</strong>
+                <small>YouTube Shorts · 實機操作展示</small>
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="flow" class="section section-tint">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">08</p>
+          <h2>完整流程</h2>
+        </div>
+        <div class="content-body">
+          <div class="process-flow" aria-label="ESP32 智慧控制完整流程">
+            <div>手機連接 ESP32 熱點</div>
+            <i aria-hidden="true">→</i>
+            <div>同步時間與設定排程</div>
+            <i aria-hidden="true">→</i>
+            <div>ESP32 每 30 秒檢查時間</div>
+            <i aria-hidden="true">→</i>
+            <div>符合設定時間</div>
+            <i aria-hidden="true">→</i>
+            <div>Servo 按壓燈具開關<br>或 GPIO4 發送 DAIKIN152</div>
+            <i aria-hidden="true">→</i>
+            <div>回到控制頁面<br>顯示推算時間與排程</div>
+          </div>
+          <div class="improvement-heading">
+            <span>Next steps</span>
+            <h3>改進方向</h3>
+          </div>
+          <div class="improvement-grid">
+            <article>
+              <span>01</span>
+              <h3>完善排程功能</h3>
+              <p>將目前的單次開、關時間擴充為星期規則、日期排程、假日停用及旅遊模式，也可製作桌面端排程工具，將行事曆內容轉換後傳送至 ESP32。</p>
+            </article>
+            <article>
+              <span>02</span>
+              <h3>加入回家前預冷功能</h3>
+              <p>結合預定返家時間或手機位置，在使用者抵達前自動開啟冷氣，提升居家使用的便利性。</p>
+            </article>
+            <article>
+              <span>03</span>
+              <h3>提升裝置可靠性</h3>
+              <p>增加伺服馬達動作後的狀態確認、異常重試與電源保護，避免機構卡住、供電不穩或網路中斷造成控制失敗。</p>
+            </article>
+          </div>
+          <div class="reference-list">
+            <h3>專題摘要</h3>
+            <p>本專題以 ESP32 建立不依賴外部網路的 AP 控制介面，透過 SG90 伺服馬達操作既有燈具開關，並以紅外線接收模組分析大金冷氣遙控器訊號。確認 DAIKIN152 協定後，再利用 IR LED 與 2N222 發射冷房 25°C、自動風量及 Quiet／Comfort 的完整狀態命令，最後整合手機操作、手動對時與定時控制功能。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-grid">
+      <div><strong>莊旻芳</strong><p>資訊工程作品集</p></div>
+      <p>ESP32 智慧開關與冷氣紅外線控制</p>
+      <a href="../../index.html">返回作品集首頁</a>
+    </div>
+  </footer>
+</body>
+</html>

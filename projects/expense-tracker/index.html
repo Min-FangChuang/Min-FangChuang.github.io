@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Expense Tracker CLI，依 TAICA HW2 規格導向開發作業實作 v1 到 v2 的命令列記帳工具演化。">
+  <meta name="theme-color" content="#102a43">
+  <title>Expense Tracker CLI｜莊旻芳作品集</title>
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+  <script src="../../assets/js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至主要內容</a>
+  <header class="site-header" data-header>
+    <div class="shell nav-wrap">
+      <a class="brand" href="../../index.html" aria-label="回到作品集首頁">
+        <span class="brand-mark" aria-hidden="true">MF</span>
+        <span>莊旻芳</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="開啟導覽" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span class="sr-only">開啟導覽</span>
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="作品導覽" data-nav>
+        <a href="#overview">摘要</a>
+        <a href="#sdd">SDD</a>
+        <a href="#features">功能</a>
+        <a href="#architecture">架構</a>
+        <a href="#code">程式碼</a>
+        <a href="#validation">驗證</a>
+        <a class="nav-github" href="../../index.html">作品集首頁</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="project-hero shell">
+      <div class="breadcrumb"><a href="../../index.html">作品集</a><span>/</span><span>軟體工程</span></div>
+      <p class="eyebrow">Python CLI · SDD · JSON storage</p>
+      <h1>Expense Tracker CLI</h1>
+      <p class="project-lead">依 TAICA HW2 規格導向開發作業，將命令列記帳工具從 v1.0 的基礎 CRUD 與 CSV 匯出，演化到 v2.0 的查詢摘要、分類治理、JSON 匯出與資料 schema 升級。</p>
+      <div class="tag-row" aria-label="使用技術">
+        <span>Python</span><span>argparse</span><span>JSON</span><span>CLI</span><span>SDD</span><span>Modular Design</span>
+      </div>
+      <div class="project-actions">
+        <a class="button button-primary" href="#features">查看功能</a>
+        <a class="button button-secondary" href="https://github.com/ktchuang/TAICA_AIASE2026/blob/main/homeworks/HW2.md" target="_blank" rel="noreferrer">作業說明</a>
+      </div>
+    </section>
+
+    <section class="project-showcase shell">
+      <figure class="cover-photo">
+        <img src="../../assets/images/covers/expense-tracker.svg" alt="Expense Tracker CLI 命令列與測試結果示意" width="1400" height="920">
+        <figcaption>Spec-driven CLI、JSON 儲存與 v1 → v2 架構演化</figcaption>
+      </figure>
+      <div class="metric-stack" aria-label="專案摘要">
+        <div><strong>2</strong><span>v1.0 / v2.0 兩階段實作</span></div>
+        <div><strong>11</strong><span>v2 主要 Python 模組</span></div>
+        <div><strong>7</strong><span>CLI 指令群</span></div>
+        <div><strong>CSV + JSON</strong><span>匯出格式</span></div>
+      </div>
+    </section>
+
+    <section id="overview" class="section section-tint">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">01</p>
+          <h2>作品摘要</h2>
+        </div>
+        <div class="content-body">
+          <p class="lead-paragraph">本專案以「先寫規格，再依規格實作」為核心。v1.0 先完成新增、查詢、修改、刪除與 CSV 匯出；v2.0 再依延伸需求加入摘要分析、分類清單管理與 JSON 匯出，並保留既有成功路徑。</p>
+          <div class="point-list">
+            <article><span>v1.0</span><div><h3>最短可用記帳流程</h3><p>用 JSON 儲存個人收支紀錄，支援 CLI 新增、列表查詢、編輯、刪除與 CSV 匯出。</p></div></article>
+            <article><span>v2.0</span><div><h3>查詢與資料品質強化</h3><p>在 list 下方加入 Count、Total Income、Total Expense、Net，並新增 summary 與 category 指令。</p></div></article>
+            <article><span>Design</span><div><h3>保留模組邊界</h3><p>CLI 解析、service layer、storage、validators、formatter 與 exporter 各自負責單一面向，降低功能演化時的改動範圍。</p></div></article>
+            <article><span>Compatibility</span><div><h3>v1 → v2 隱式升級</h3><p>v2 storage 將 JSON schema 擴充為 next_id、categories 與 records，並能為舊資料補上預設分類清單。</p></div></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sdd" class="section shell content-grid">
+      <div class="sticky-heading">
+        <p class="section-index">02</p>
+        <h2>規格導向開發</h2>
+      </div>
+      <div class="content-body">
+        <p class="lead-paragraph">HW2 要求在既有 v1.0 規格與實作基礎上，閱讀自動產生的 v2.0 延伸需求，撰寫新的 SDD 並完成 v2 實作。重點不是單純加功能，而是讓規格、架構、相容性與實作彼此對齊。</p>
+        <div class="vuln-explain hardware-note">
+          <article>
+            <span>v1 Decision</span>
+            <h3>先穩定核心邏輯</h3>
+            <p>v1.0 選擇標準函式庫 argparse、JSON 檔案與 dataclass 模型，把常見記帳流程做完整，同時保留未來替換輸入層、儲存層與輸出格式的彈性。</p>
+          </article>
+          <article>
+            <span>v2 Extension</span>
+            <h3>依需求局部擴充</h3>
+            <p>v2.0 沒有重寫整套程式，而是在原本分層上補入 query summary、summary rows、category 管理與 JSON exporter，讓功能升級不破壞既有指令。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="section section-dark">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">03</p>
+          <h2>功能範圍</h2>
+        </div>
+        <div class="content-body">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>指令</th><th>功能</th><th>v2 重點</th></tr></thead>
+              <tbody>
+                <tr><td><code>add</code></td><td>新增收入或支出紀錄。</td><td>檢查 category 是否在合法分類清單中。</td></tr>
+                <tr><td><code>list</code></td><td>依 type、category、date、month、keyword 等條件查詢。</td><td>表格下方附上筆數、收入、支出與淨餘摘要。</td></tr>
+                <tr><td><code>summary</code></td><td>依 category + type 彙總紀錄。</td><td>支出列額外顯示 percentage，協助觀察支出結構。</td></tr>
+                <tr><td><code>category</code></td><td>列出、新增、刪除合法分類。</td><td>提升分類一致性，避免 food、Food、food 空白等資料分裂。</td></tr>
+                <tr><td><code>edit</code></td><td>依 id 修改既有紀錄欄位。</td><td>修改 category 時同樣套用合法分類驗證。</td></tr>
+                <tr><td><code>delete</code></td><td>依 id 刪除紀錄。</td><td>保留明確成功/失敗訊息與退出碼語意。</td></tr>
+                <tr><td><code>export</code></td><td>匯出篩選後的紀錄。</td><td>保留 CSV，新增 JSON，且匯出 JSON 不包含 next_id 等內部欄位。</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="script-panel condition-panel">
+            <div class="script-copy"><span>常用指令範例</span></div>
+            <pre><code>python main.py add --amount 100 --category food --note lunch
+python main.py list --type expense --month 2026-03
+python main.py summary --month 2026-03
+python main.py category --list
+python main.py category --add health
+python main.py export --format json --output march.json --month 2026-03</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="architecture" class="section shell content-grid">
+      <div class="sticky-heading">
+        <p class="section-index">04</p>
+        <h2>架構演化</h2>
+      </div>
+      <div class="content-body">
+        <div class="table-wrap compact-table">
+          <table>
+            <thead><tr><th>面向</th><th>v1.0</th><th>v2.0</th></tr></thead>
+            <tbody>
+              <tr><td>儲存層</td><td>JSON 檔案，管理 next_id 與 records。</td><td>JSON schema 加入 categories，並支援舊資料隱式遷移。</td></tr>
+              <tr><td>CLI</td><td>argparse + add/list/edit/delete/export。</td><td>新增 summary 與 category subcommands。</td></tr>
+              <tr><td>查詢輸出</td><td>表格列出紀錄。</td><td>表格 + query summary + category summary。</td></tr>
+              <tr><td>匯出</td><td>CSV。</td><td>CSV + JSON。</td></tr>
+              <tr><td>資料品質</td><td>category 可自由輸入。</td><td>category 需存在於合法分類清單。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="module-list step-list">
+          <article><div><span class="module-index">Core</span><h3>Service layer</h3><p><code>services.py</code> 協調驗證、儲存、過濾、摘要、分類與匯出，是 CLI 與資料層之間的主要業務邊界。</p></div></article>
+          <article><div><span class="module-index">Data</span><h3>Storage + Models</h3><p><code>storage.py</code> 負責初始化、讀寫與 schema 升級；<code>models.py</code> 定義 Item、QuerySummary 與 SummaryRow。</p></div></article>
+          <article><div><span class="module-index">Output</span><h3>Formatter + Exporter</h3><p><code>formatter.py</code> 負責 CLI 表格與摘要輸出；<code>exporter.py</code> 負責 CSV 與 JSON 檔案輸出。</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="code" class="section section-tint">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">05</p>
+          <h2>程式碼</h2>
+        </div>
+        <div class="content-body">
+          <p class="lead-paragraph">以下放入 v2.0 的 Python 原始碼，對應規格導向開發後的最終實作版本。</p>
+          <div class="module-list step-list">
+            <article>
+              <div>
+                <span class="module-index">Entry</span>
+                <h3>入口與 CLI</h3>
+                <p><a class="text-link" href="../../assets/code/expense-tracker/v2/main.py" target="_blank" rel="noreferrer">main.py <span>↗</span></a></p>
+                <p><a class="text-link" href="../../assets/code/expense-tracker/v2/cli.py" target="_blank" rel="noreferrer">cli.py <span>↗</span></a></p>
+              </div>
+            </article>
+            <article>
+              <div>
+                <span class="module-index">Core</span>
+                <h3>服務、驗證與資料層</h3>
+                <p><a class="text-link" href="../../assets/code/expense-tracker/v2/services.py" target="_blank" rel="noreferrer">services.py <span>↗</span></a></p>
+                <p><a class="text-link" href="../../assets/code/expense-tracker/v2/validators.py" target="_blank" rel="noreferrer">validators.py <span>↗</span></a></p>
+                <p><a class="text-link" href="../../assets/code/expense-tracker/v2/storage.py" target="_blank" rel="noreferrer">storage.py <span>↗</span></a></p>
+                <p><a class="text-link" href="../../assets/code/expense-tracker/v2/models.py" target="_blank" rel="noreferrer">models.py <span>↗</span></a></p>
+              </div>
+            </article>
+            <article>
+              <div>
+                <span class="module-index">Query</span>
+                <h3>查詢、摘要與輸出</h3>
+                <p><a class="text-link" href="../../assets/code/expense-tracker/v2/filters.py" target="_blank" rel="noreferrer">filters.py <span>↗</span></a></p>
+                <p><a class="text-link" href="../../assets/code/expense-tracker/v2/query_summary.py" target="_blank" rel="noreferrer">query_summary.py <span>↗</span></a></p>
+                <p><a class="text-link" href="../../assets/code/expense-tracker/v2/summary_rows.py" target="_blank" rel="noreferrer">summary_rows.py <span>↗</span></a></p>
+                <p><a class="text-link" href="../../assets/code/expense-tracker/v2/formatter.py" target="_blank" rel="noreferrer">formatter.py <span>↗</span></a></p>
+                <p><a class="text-link" href="../../assets/code/expense-tracker/v2/exporter.py" target="_blank" rel="noreferrer">exporter.py <span>↗</span></a></p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="validation" class="section section-tint">
+      <div class="shell content-grid">
+        <div class="sticky-heading">
+          <p class="section-index">06</p>
+          <h2>驗證結果</h2>
+        </div>
+        <div class="content-body">
+          <p class="lead-paragraph">我使用暫存副本執行 v2 CLI，避免修改原本作業資料。檢查項目涵蓋說明文件中的核心成功路徑與資料品質限制。</p>
+          <div class="decision-grid">
+            <article><span>Help</span><h3>CLI 指令入口</h3><p><code>main.py --help</code> 正確列出 add、list、summary、edit、delete、export、category。</p></article>
+            <article><span>Category</span><h3>分類清單</h3><p><code>category --list</code> 顯示 entertainment、food、other、salary、transport 等預設分類。</p></article>
+            <article><span>Summary</span><h3>摘要分析</h3><p>新增 expense 與 income 後，<code>summary --month 2026-03</code> 正確顯示 total 與 expense percentage。</p></article>
+            <article><span>Export</span><h3>JSON 匯出</h3><p><code>export --format json</code> 產出使用者可見欄位，不包含 next_id。</p></article>
+          </div>
+          <div class="script-panel condition-panel">
+            <div class="script-copy"><span>代表性輸出</span></div>
+            <pre><code>ID  Date        Type     Category  Amount  Note
+1   2026-03-16  expense  food      120     lunch
+2   2026-03-16  income   salary    32000   march salary
+
+-------------------------------------------------------
+Count:          2
+Total Income:   32000
+Total Expense:  120
+Net:            31880</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-grid">
+      <div><strong>莊旻芳</strong><p>資訊工程作品集</p></div>
+      <p>Expense Tracker CLI · TAICA HW2</p>
+      <a href="../../index.html">返回作品集首頁</a>
+    </div>
+  </footer>
+</body>
+</html>

@@ -151,6 +151,135 @@
     });
   }
 
+  document.querySelectorAll('[data-evidence-gallery]').forEach((gallery) => {
+    const mainButton = gallery.querySelector('[data-lightbox]');
+    const mainImage = gallery.querySelector('[data-evidence-image]');
+    const title = gallery.querySelector('[data-evidence-title]');
+    const description = gallery.querySelector('[data-evidence-description]');
+    const count = gallery.querySelector('[data-evidence-count]');
+    const thumbs = [...gallery.querySelectorAll('[data-evidence-thumb]')];
+    const filters = [...gallery.querySelectorAll('[data-evidence-filter]')];
+    const prev = gallery.querySelector('[data-evidence-prev]');
+    const next = gallery.querySelector('[data-evidence-next]');
+    let activeGroup = filters.find((filter) => filter.classList.contains('is-active'))?.dataset.evidenceFilter || thumbs[0]?.dataset.group;
+    let activeIndex = 0;
+
+    const activeThumbs = () => thumbs.filter((thumb) => thumb.dataset.group === activeGroup);
+
+    const showEvidence = (index) => {
+      const visibleThumbs = activeThumbs();
+      activeIndex = (index + visibleThumbs.length) % visibleThumbs.length;
+      const active = visibleThumbs[activeIndex];
+      const src = active.dataset.src;
+
+      mainButton.dataset.lightbox = src;
+      mainImage.src = src;
+      mainImage.alt = active.dataset.alt;
+      title.textContent = active.dataset.title;
+      description.textContent = active.dataset.description;
+      count.textContent = `${String(activeIndex + 1).padStart(2, '0')} / ${String(visibleThumbs.length).padStart(2, '0')}`;
+
+      thumbs.forEach((thumb) => {
+        const visible = thumb.dataset.group === activeGroup;
+        const selected = thumb === active;
+        thumb.hidden = !visible;
+        thumb.classList.toggle('is-active', selected);
+        thumb.setAttribute('aria-selected', String(selected));
+      });
+
+      active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    };
+
+    thumbs.forEach((thumb) => {
+      thumb.addEventListener('click', () => {
+        activeGroup = thumb.dataset.group;
+        showEvidence(activeThumbs().indexOf(thumb));
+      });
+    });
+
+    filters.forEach((filter) => {
+      filter.addEventListener('click', () => {
+        activeGroup = filter.dataset.evidenceFilter;
+        filters.forEach((candidate) => {
+          const selected = candidate === filter;
+          candidate.classList.toggle('is-active', selected);
+          candidate.setAttribute('aria-pressed', String(selected));
+        });
+        showEvidence(0);
+      });
+    });
+
+    prev?.addEventListener('click', () => showEvidence(activeIndex - 1));
+    next?.addEventListener('click', () => showEvidence(activeIndex + 1));
+    showEvidence(0);
+  });
+
+  document.querySelectorAll('[data-code-switcher]').forEach((switcher) => {
+    const filters = [...switcher.querySelectorAll('[data-code-filter]')];
+    const panels = [...switcher.querySelectorAll('[data-code-panel]')];
+
+    const showPanel = (group) => {
+      filters.forEach((filter) => {
+        const selected = filter.dataset.codeFilter === group;
+        filter.classList.toggle('is-active', selected);
+        filter.setAttribute('aria-pressed', String(selected));
+      });
+
+      panels.forEach((panel) => {
+        panel.hidden = panel.dataset.codePanel !== group;
+        panel.classList.toggle('is-active', panel.dataset.codePanel === group);
+      });
+    };
+
+    filters.forEach((filter) => {
+      filter.addEventListener('click', () => showPanel(filter.dataset.codeFilter));
+    });
+
+    switcher.querySelectorAll('[data-copy-code]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const panel = button.closest('[data-code-panel]');
+        const code = panel?.querySelector('code')?.textContent.trim();
+        if (!code) return;
+
+        try {
+          await navigator.clipboard.writeText(code);
+          button.textContent = '已複製';
+          window.setTimeout(() => {
+            button.textContent = '複製';
+          }, 1400);
+        } catch {
+          button.textContent = '複製失敗';
+          window.setTimeout(() => {
+            button.textContent = '複製';
+          }, 1400);
+        }
+      });
+    });
+
+    const initial = filters.find((filter) => filter.classList.contains('is-active'))?.dataset.codeFilter || panels[0]?.dataset.codePanel;
+    if (initial) showPanel(initial);
+  });
+
+  document.querySelectorAll('[data-youtube-embed]').forEach((embed) => {
+    const frameWrap = embed.querySelector('[data-youtube-frame]');
+    const fallback = embed.querySelector('[data-youtube-fallback]');
+    const videoId = embed.dataset.videoId;
+
+    if (!frameWrap || !fallback || !videoId || location.protocol === 'file:') return;
+
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?playsinline=1&rel=0`;
+    iframe.title = 'ESP32 智慧開關與冷氣紅外線控制 Demo';
+    iframe.loading = 'lazy';
+    iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    iframe.allowFullscreen = true;
+
+    frameWrap.replaceChildren(iframe);
+    frameWrap.hidden = false;
+    fallback.hidden = true;
+  });
+
   const dialog = document.querySelector('[data-lightbox-dialog]');
   const image = dialog?.querySelector('[data-lightbox-image]');
   const close = dialog?.querySelector('[data-lightbox-close]');
