@@ -140,6 +140,7 @@
                 <div class="journey-event event-ai"><span>TAICA 課程與作品 · AI</span><strong>生成式 AI 應用系統與工程</strong><p>以生成式 AI 輔助規格分析、程式實作與測試，完成可執行的系統作業。</p></div>
                 <div class="journey-event event-ai"><span>TAICA 課程與實作 · AI</span><strong>機器導航與探索</strong><p>學習移動機器人的環境感知、定位、導航與探索方法。</p></div>
                 <div class="journey-event event-ai"><span>多媒體系統課程作品 · 影像處理</span><strong>Motion Estimation 四演算法比較</strong><p>114-2「多媒體系統」課程作品，以 C++ 與 OpenCV 比較四種方塊匹配搜尋方法的運算量與補償結果。</p></div>
+                <div class="journey-event event-ai"><span>多媒體系統期末專案 · Agent Workflow</span><strong>多代理人影音生成工作流程</strong><p>以 Hermes Agent 建立 60 秒系所形象宣傳影片的多代理人企劃流程，保留 handoff、trace 與 baseline 比較。</p></div>
                 <div class="journey-event event-ai"><span>影像處理課程作品 · AI／影像</span><strong>TXL-PBC 血球辨識</strong><p>114-2「影像處理」課程作品，以 TXL-PBC 血球影像進行辨識實作與結果驗證。</p></div>
                 <div class="journey-event event-security"><span>資訊安全課程實作 · 資安</span><strong>AD Lab、Samba 與 Rejetto HFS 漏洞驗證</strong><p>於資訊安全課程完成環境建置、掃描、漏洞驗證、PoC 操作與結果紀錄。</p></div>
               </div>
@@ -180,7 +181,7 @@
           <button class="filter-button" type="button" data-filter="security">資安實作</button>
         </div>
 
-        <div class="portfolio-meta" aria-live="polite"><span data-result-count>10</span> 項作品</div>
+        <div class="portfolio-meta" aria-live="polite"><span data-result-count>11</span> 項作品</div>
 
         <div class="project-grid" data-project-grid>
           <article class="project-tile" data-categories="ai image">
@@ -239,6 +240,21 @@
                 <strong>Motion Estimation</strong>
                 <span>以 C++ 與 OpenCV 實作四種 block matching 方法，比較搜尋效率、補償影格與移動向量。</span>
                 <span class="project-card-footer"><em>C++ · OpenCV · Benchmark</em><i aria-hidden="true">＋</i></span>
+              </span>
+            </button>
+          </article>
+
+          <article class="project-tile" data-categories="ai systems software">
+            <button class="project-card" type="button" data-project="multimedia-agent-video" aria-haspopup="dialog" aria-label="查看多代理人影音生成工作流程作品摘要">
+              <span class="project-cover">
+                <img src="assets/images/covers/multimedia-agent-video.svg" alt="Hermes Agent 多代理人影音生成工作流程示意" width="1400" height="920" loading="lazy" decoding="async">
+                <span class="project-state">多媒體系統期末專案</span>
+              </span>
+              <span class="project-card-body">
+                <span class="project-category">多媒體系統 · Agent Workflow</span>
+                <strong>多代理人影音生成工作流程</strong>
+                <span>以 Hermes Agent 串接企劃、腳本、視覺、審查與整合流程，完成台南大學資工系宣傳案例成果。</span>
+                <span class="project-card-footer"><em>Hermes · Agents · JSON · Trace</em><i aria-hidden="true">＋</i></span>
               </span>
             </button>
           </article>
@@ -409,6 +425,20 @@
     data-status="114-2 多媒體系統課程作品；已整理完整報告附件與 C++ source。"
     data-more="projects/motion-estimation/"
     data-more-label="查看完整說明"></template>
+
+  <template id="project-multimedia-agent-video"
+    data-category="多媒體系統 · Agent Workflow"
+    data-title="多代理人影音生成工作流程"
+    data-image="assets/images/covers/multimedia-agent-video.svg"
+    data-image-alt="Hermes Agent 多代理人影音生成工作流程示意"
+    data-summary="以 Hermes Agent 建立國立臺南大學資訊工程學系 60 秒形象宣傳影片的多代理人企劃流程，並完成台南大學宣傳案例成果展示。"
+    data-points="由 Planner、Script、Visual、Reviewer、Finalizer 五個 agent 分工完成影片企劃|以 JSON handoff 保存 agent 間資料交換，並保留 execution trace|輸出 final video、字幕檔與素材來源說明，呈現台南大學資工系宣傳案例成果"
+    data-tags="Hermes Agent|Python|Multi-agent Workflow|JSON Handoff|Execution Trace|Baseline"
+    data-status="114-2 多媒體系統期末專案；repo 保留 report、agent prompts、handoff JSON、trace、baseline 與 final video outputs。"
+    data-more="projects/multimedia-agent-video/"
+    data-more-label="查看完整說明"
+    data-demo="https://youtu.be/HX7ah2p4yQI"
+    data-demo-label="觀看成果影片 ↗"></template>
 
   <template id="project-connect-four"
     data-category="行動裝置程式設計 · 軟體工程"

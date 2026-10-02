@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 920" role="img" aria-labelledby="title desc">
+  <title id="title">多代理人影音生成工作流程封面</title><desc id="desc">Hermes Agent、JSON handoff、execution trace 與 60 秒影片企劃流程示意</desc>
+  <rect width="1400" height="920" fill="#eef5f8"/>
+  <rect x="90" y="105" width="1220" height="710" rx="34" fill="#102a43"/>
+  <rect x="130" y="155" width="420" height="610" rx="24" fill="#d9eaf0"/>
+  <rect x="595" y="155" width="675" height="610" rx="24" fill="#f8fbfc"/>
+  <g font-family="Arial, sans-serif">
+    <text x="165" y="225" fill="#102a43" font-size="42" font-weight="700">Hermes Workflow</text>
+    <text x="165" y="275" fill="#486581" font-size="24">multi-agent video planning</text>
+  </g>
+  <g font-family="Arial, sans-serif" font-weight="700" font-size="28">
+    <rect x="170" y="340" width="280" height="62" rx="18" fill="#2f80ed"/><text x="310" y="381" text-anchor="middle" fill="#fff">Planner</text>
+    <rect x="170" y="430" width="280" height="62" rx="18" fill="#27ae60"/><text x="310" y="471" text-anchor="middle" fill="#fff">Script</text>
+    <rect x="170" y="520" width="280" height="62" rx="18" fill="#f2994a"/><text x="310" y="561" text-anchor="middle" fill="#102a43">Visual</text>
+    <rect x="170" y="610" width="280" height="62" rx="18" fill="#9b51e0"/><text x="310" y="651" text-anchor="middle" fill="#fff">Reviewer</text>
+    <rect x="170" y="700" width="280" height="62" rx="18" fill="#eb5757"/><text x="310" y="741" text-anchor="middle" fill="#fff">Finalizer</text>
+  </g>
+  <g fill="none" stroke="#7fb3c8" stroke-width="8" stroke-linecap="round">
+    <path d="M460 371 C535 371 535 260 615 260"/>
+    <path d="M460 461 C535 461 535 365 615 365"/>
+    <path d="M460 551 C535 551 535 470 615 470"/>
+    <path d="M460 641 C535 641 535 575 615 575"/>
+    <path d="M460 731 C535 731 535 680 615 680"/>
+  </g>
+  <g font-family="monospace" font-size="24">
+    <rect x="650" y="215" width="560" height="118" rx="18" fill="#102a43"/>
+    <text x="685" y="260" fill="#7fd3a9">{ "handoff": "01_planner_output" }</text>
+    <text x="685" y="300" fill="#d9e2ec">scene_outline → narration → visual</text>
+    <rect x="650" y="385" width="560" height="118" rx="18" fill="#102a43"/>
+    <text x="685" y="430" fill="#7fd3a9">{ "trace": "execution_trace" }</text>
+    <text x="685" y="470" fill="#d9e2ec">brief + prompts + agent outputs</text>
+    <rect x="650" y="555" width="560" height="118" rx="18" fill="#102a43"/>
+    <text x="685" y="600" fill="#7fd3a9">{ "baseline": "single_agent" }</text>
+    <text x="685" y="640" fill="#d9e2ec">compare workflow structure</text>
+  </g>
+  <text x="95" y="870" fill="#102a43" font-family="Arial, sans-serif" font-size="66" font-weight="700">多代理人影音生成工作流程</text>
+  <text x="98" y="905" fill="#486581" font-family="Arial, sans-serif" font-size="24">Hermes Agent · JSON handoff · execution trace · baseline comparison</text>
+</svg>
