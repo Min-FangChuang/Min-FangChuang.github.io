@@ -151,6 +151,69 @@
     });
   }
 
+  const journeyModal = document.querySelector('[data-journey-modal]');
+  let lastJourneyTrigger = null;
+
+  if (journeyModal) {
+    const journeyImage = journeyModal.querySelector('[data-journey-image]');
+    const journeyCategory = journeyModal.querySelector('[data-journey-category]');
+    const journeyTitle = journeyModal.querySelector('[data-journey-title]');
+    const journeySummary = journeyModal.querySelector('[data-journey-summary]');
+    const journeyTime = journeyModal.querySelector('[data-journey-time]');
+    const journeyPlace = journeyModal.querySelector('[data-journey-place]');
+    const journeyReflection = journeyModal.querySelector('[data-journey-reflection]');
+    const journeySkills = journeyModal.querySelector('[data-journey-skills]');
+    const journeyLink = journeyModal.querySelector('[data-journey-link]');
+
+    document.querySelectorAll('[data-journey]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const source = document.querySelector(`#journey-${button.dataset.journey}`);
+        if (!source) return;
+
+        lastJourneyTrigger = button;
+        journeyImage.src = source.dataset.image;
+        journeyImage.alt = source.dataset.imageAlt;
+        journeyImage.style.objectPosition = source.dataset.imagePosition || 'center';
+        journeyCategory.textContent = source.dataset.category;
+        journeyTitle.textContent = source.dataset.title;
+        journeySummary.textContent = source.dataset.summary;
+        journeyTime.textContent = source.dataset.time;
+        journeyPlace.textContent = source.dataset.place;
+        journeyReflection.textContent = source.dataset.reflection;
+
+        if (source.dataset.link) {
+          journeyLink.hidden = false;
+          journeyLink.href = source.dataset.link;
+        } else {
+          journeyLink.hidden = true;
+          journeyLink.removeAttribute('href');
+        }
+
+        journeySkills.replaceChildren(...source.dataset.skills.split('|').map((skill) => {
+          const chip = document.createElement('span');
+          chip.textContent = skill;
+          return chip;
+        }));
+
+        lockPageScroll();
+        journeyModal.showModal();
+      });
+    });
+
+    journeyModal.querySelectorAll('[data-journey-close]').forEach((button) => {
+      button.addEventListener('click', () => journeyModal.close());
+    });
+
+    journeyModal.addEventListener('click', (event) => {
+      if (event.target === journeyModal) journeyModal.close();
+    });
+
+    journeyModal.addEventListener('close', () => {
+      unlockPageScroll();
+      lastJourneyTrigger?.focus();
+    });
+  }
+
   document.querySelectorAll('[data-evidence-gallery]').forEach((gallery) => {
     const mainButton = gallery.querySelector('[data-lightbox]');
     const mainImage = gallery.querySelector('[data-evidence-image]');
