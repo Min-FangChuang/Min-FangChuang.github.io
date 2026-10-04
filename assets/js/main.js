@@ -164,41 +164,66 @@
     const journeyReflection = journeyModal.querySelector('[data-journey-reflection]');
     const journeySkills = journeyModal.querySelector('[data-journey-skills]');
     const journeyLink = journeyModal.querySelector('[data-journey-link]');
+    let currentJourneyHash = '';
+
+    const openJourneyModal = (button, updateHash = true) => {
+      const journeyId = button.dataset.journey;
+      const source = document.querySelector(`#journey-${journeyId}`);
+      if (!source) return;
+
+      lastJourneyTrigger = button;
+      currentJourneyHash = `#activity-${journeyId}`;
+      journeyImage.src = source.dataset.image;
+      journeyImage.alt = source.dataset.imageAlt;
+      journeyImage.style.objectPosition = source.dataset.imagePosition || 'center';
+      journeyCategory.textContent = source.dataset.category;
+      journeyTitle.textContent = source.dataset.title;
+      journeySummary.textContent = source.dataset.summary;
+      journeyTime.textContent = source.dataset.time;
+      journeyPlace.textContent = source.dataset.place;
+      journeyReflection.textContent = source.dataset.reflection;
+
+      if (source.dataset.link) {
+        journeyLink.hidden = false;
+        journeyLink.href = source.dataset.link;
+      } else {
+        journeyLink.hidden = true;
+        journeyLink.removeAttribute('href');
+      }
+
+      journeySkills.replaceChildren(...source.dataset.skills.split('|').map((skill) => {
+        const chip = document.createElement('span');
+        chip.textContent = skill;
+        return chip;
+      }));
+
+      if (updateHash && window.location.hash !== currentJourneyHash) {
+        history.pushState(null, '', currentJourneyHash);
+      }
+
+      if (!journeyModal.open) {
+        lockPageScroll();
+        journeyModal.showModal();
+      }
+    };
 
     document.querySelectorAll('[data-journey]').forEach((button) => {
       button.addEventListener('click', () => {
-        const source = document.querySelector(`#journey-${button.dataset.journey}`);
-        if (!source) return;
-
-        lastJourneyTrigger = button;
-        journeyImage.src = source.dataset.image;
-        journeyImage.alt = source.dataset.imageAlt;
-        journeyImage.style.objectPosition = source.dataset.imagePosition || 'center';
-        journeyCategory.textContent = source.dataset.category;
-        journeyTitle.textContent = source.dataset.title;
-        journeySummary.textContent = source.dataset.summary;
-        journeyTime.textContent = source.dataset.time;
-        journeyPlace.textContent = source.dataset.place;
-        journeyReflection.textContent = source.dataset.reflection;
-
-        if (source.dataset.link) {
-          journeyLink.hidden = false;
-          journeyLink.href = source.dataset.link;
-        } else {
-          journeyLink.hidden = true;
-          journeyLink.removeAttribute('href');
-        }
-
-        journeySkills.replaceChildren(...source.dataset.skills.split('|').map((skill) => {
-          const chip = document.createElement('span');
-          chip.textContent = skill;
-          return chip;
-        }));
-
-        lockPageScroll();
-        journeyModal.showModal();
+        openJourneyModal(button);
       });
     });
+
+    const openJourneyFromHash = () => {
+      const matched = window.location.hash.match(/^#activity-(.+)$/);
+      if (!matched) {
+        if (journeyModal.open) journeyModal.close();
+        return;
+      }
+
+      const button = [...document.querySelectorAll('[data-journey]')]
+        .find((candidate) => candidate.dataset.journey === matched[1]);
+      if (button) openJourneyModal(button, false);
+    };
 
     journeyModal.querySelectorAll('[data-journey-close]').forEach((button) => {
       button.addEventListener('click', () => journeyModal.close());
@@ -210,8 +235,15 @@
 
     journeyModal.addEventListener('close', () => {
       unlockPageScroll();
+      if (window.location.hash === currentJourneyHash) {
+        history.pushState(null, '', `${window.location.pathname}${window.location.search}#journey`);
+      }
+      currentJourneyHash = '';
       lastJourneyTrigger?.focus();
     });
+
+    window.addEventListener('hashchange', openJourneyFromHash);
+    openJourneyFromHash();
   }
 
   document.querySelectorAll('[data-evidence-gallery]').forEach((gallery) => {
